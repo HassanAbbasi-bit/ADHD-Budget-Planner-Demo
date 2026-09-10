@@ -1,0 +1,4246 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7f3">
+  <meta name="description" content="CalmPocket is an offline ADHD-friendly paycheck and personal budget planner.">
+  <link rel="manifest" href="manifest.json">
+  <title>CalmPocket Budget Planner</title>
+  <style>:root {
+  --bg: #f5f7f3;
+  --surface: #ffffff;
+  --surface-soft: #eef3ed;
+  --surface-warm: #fff8ed;
+  --ink: #20312d;
+  --ink-soft: #49615a;
+  --muted: #7c9189;
+  --line: #e1e9e2;
+  --primary: #3f7466;
+  --primary-deep: #2e5c50;
+  --primary-soft: #dceee8;
+  --lavender: #776aa9;
+  --lavender-soft: #eeeafd;
+  --amber: #c78836;
+  --amber-soft: #fff0d9;
+  --rose: #b96875;
+  --rose-soft: #fbe8eb;
+  --blue: #4c7f9d;
+  --blue-soft: #e3f0f7;
+  --shadow: 0 18px 48px rgba(50, 74, 66, 0.08);
+  --shadow-small: 0 8px 24px rgba(50, 74, 66, 0.07);
+  --radius-xl: 28px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --font: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+[data-theme="dark"] {
+  --bg: #151d1b;
+  --surface: #202b27;
+  --surface-soft: #263630;
+  --surface-warm: #342b20;
+  --ink: #edf4ef;
+  --ink-soft: #b8c9c1;
+  --muted: #8fa69c;
+  --line: #34463f;
+  --primary: #8dc7b5;
+  --primary-deep: #b7e2d3;
+  --primary-soft: #24453b;
+  --lavender: #b7a9ef;
+  --lavender-soft: #332e50;
+  --amber: #efbd70;
+  --amber-soft: #4a3820;
+  --rose: #e1a1ad;
+  --rose-soft: #4a2e35;
+  --blue: #9bc8e5;
+  --blue-soft: #263e4b;
+  --shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
+  --shadow-small: 0 8px 24px rgba(0, 0, 0, 0.16);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--bg);
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(76, 127, 157, 0.28);
+  outline-offset: 2px;
+}
+
+a {
+  color: inherit;
+}
+
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  flex: 0 0 270px;
+  flex-direction: column;
+  width: 270px;
+  height: 100vh;
+  padding: 26px 16px 18px;
+  border-right: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.brand-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 0 10px 24px;
+}
+
+.brand-mark {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  flex: 0 0 39px;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 21px;
+  box-shadow: 0 8px 20px rgba(63, 116, 102, 0.22);
+}
+
+.brand-name {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.brand-caption {
+  margin-top: 2px;
+  color: var(--muted);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebar-close {
+  display: none;
+  margin-left: auto;
+}
+
+.profile-mini {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 4px 26px;
+  padding: 11px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-soft);
+}
+
+.avatar {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.profile-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-copy strong {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-copy span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: #64b58f;
+  box-shadow: 0 0 0 4px rgba(100, 181, 143, 0.12);
+}
+
+.nav-label {
+  padding: 0 12px 10px;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 43px;
+  padding: 10px 12px;
+  border-radius: 13px;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 12px;
+  font-weight: 700;
+  text-align: left;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.nav-item:hover {
+  background: var(--surface-soft);
+  color: var(--ink);
+  transform: translateX(2px);
+}
+
+.nav-item.active {
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+}
+
+.nav-icon {
+  display: grid;
+  width: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.nav-badge {
+  min-width: 19px;
+  margin-left: auto;
+  padding: 2px 6px;
+  border-radius: 20px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  font-size: 9px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.sidebar-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.privacy-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--surface-warm);
+}
+
+.privacy-icon {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  flex: 0 0 23px;
+  place-items: center;
+  border-radius: 8px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  font-size: 16px;
+}
+
+.privacy-card div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.privacy-card strong {
+  font-size: 10px;
+}
+
+.privacy-card span {
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.nav-settings {
+  min-height: 38px;
+}
+
+.main-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 29px 44px 18px;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.topbar h1 {
+  margin: 4px 0 0;
+  color: var(--ink);
+  font-size: clamp(23px, 2.5vw, 31px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+}
+
+.eyebrow {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.icon-button {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+  font-size: 18px;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+.icon-button:hover {
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+}
+
+.menu-toggle {
+  display: none;
+}
+
+.soft-button,
+.primary-button,
+.secondary-button,
+.danger-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 9px 14px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.soft-button:hover,
+.primary-button:hover,
+.secondary-button:hover,
+.danger-button:hover {
+  transform: translateY(-1px);
+}
+
+.soft-button {
+  background: var(--surface);
+  color: var(--ink-soft);
+  box-shadow: var(--shadow-small);
+}
+
+.soft-button:hover {
+  color: var(--primary-deep);
+}
+
+.primary-button {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(63, 116, 102, 0.2);
+}
+
+.primary-button:hover {
+  background: var(--primary-deep);
+  box-shadow: 0 11px 22px rgba(63, 116, 102, 0.25);
+}
+
+.secondary-button {
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+}
+
+.danger-button {
+  background: var(--rose-soft);
+  color: var(--rose);
+}
+
+.circle-add {
+  display: grid;
+  width: 39px;
+  height: 39px;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 23px;
+  line-height: 1;
+  box-shadow: 0 8px 18px rgba(63, 116, 102, 0.25);
+  transition: transform 160ms ease;
+}
+
+.circle-add:hover {
+  transform: rotate(7deg) scale(1.04);
+}
+
+.app-view {
+  max-width: 1420px;
+  margin: 0 auto;
+  padding: 0 44px 50px;
+}
+
+.view-intro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin: 5px 0 22px;
+}
+
+.view-intro h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 20px;
+  letter-spacing: -0.03em;
+}
+
+.view-intro p {
+  max-width: 620px;
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.view-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, 0.85fr);
+  gap: 18px;
+}
+
+.hero-card {
+  position: relative;
+  min-height: 298px;
+  overflow: hidden;
+  padding: 28px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, #365f55 0%, #497c6c 58%, #79ac97 100%);
+  color: #fff;
+  box-shadow: 0 20px 45px rgba(47, 94, 80, 0.23);
+}
+
+.hero-card::after {
+  position: absolute;
+  right: -85px;
+  bottom: -115px;
+  width: 330px;
+  height: 330px;
+  border: 1px solid rgba(255, 255, 255, 0.19);
+  border-radius: 50%;
+  box-shadow: 0 0 0 28px rgba(255, 255, 255, 0.04), 0 0 0 58px rgba(255, 255, 255, 0.03);
+  content: "";
+}
+
+.hero-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+}
+
+.hero-kicker {
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.77);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero-card h2 {
+  max-width: 380px;
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.hero-number {
+  margin: 12px 0 3px;
+  font-size: clamp(46px, 6vw, 76px);
+  font-weight: 850;
+  letter-spacing: -0.09em;
+  line-height: 0.98;
+}
+
+.hero-note {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 11px;
+}
+
+.hero-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.hero-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 30px;
+}
+
+.hero-subnumber {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hero-subnumber span {
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 10px;
+}
+
+.hero-subnumber strong {
+  font-size: 19px;
+}
+
+.hero-bar {
+  width: min(250px, 100%);
+}
+
+.hero-bar-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 10px;
+}
+
+.bar-track {
+  height: 7px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: #f7d9a4;
+}
+
+.attention-card {
+  min-height: 298px;
+  padding: 23px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-small);
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 17px;
+}
+
+.card-title-row h3,
+.content-card h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 14px;
+  letter-spacing: -0.02em;
+}
+
+.card-title-row a,
+.text-button {
+  padding: 0;
+  background: transparent;
+  color: var(--primary);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.attention-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.attention-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-height: 52px;
+  padding: 9px 10px;
+  border-radius: 13px;
+  background: var(--surface-soft);
+}
+
+.attention-icon {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  flex: 0 0 31px;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  font-size: 15px;
+}
+
+.attention-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.attention-copy strong {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.attention-copy span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.attention-arrow {
+  color: var(--muted);
+  font-size: 16px;
+}
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 13px;
+  margin-top: 18px;
+}
+
+.metric-card {
+  min-height: 105px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-small);
+}
+
+.metric-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.metric-label {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.metric-icon {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  place-items: center;
+  border-radius: 9px;
+  font-size: 13px;
+}
+
+.metric-icon.green {
+  background: var(--primary-soft);
+  color: var(--primary);
+}
+
+.metric-icon.orange {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.metric-icon.purple {
+  background: var(--lavender-soft);
+  color: var(--lavender);
+}
+
+.metric-icon.blue {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.metric-icon.rose {
+  background: var(--rose-soft);
+  color: var(--rose);
+}
+
+.metric-value {
+  display: block;
+  margin-top: 15px;
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+}
+
+.metric-foot {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.82fr);
+  gap: 18px;
+  margin-top: 18px;
+}
+
+.content-card {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-small);
+}
+
+.section-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 27px 0 13px;
+}
+
+.section-heading h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 15px;
+  letter-spacing: -0.025em;
+}
+
+.section-heading p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.quick-add-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.quick-chip {
+  min-width: 56px;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+  font-size: 11px;
+  font-weight: 800;
+  transition: border 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.quick-chip:hover {
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+  transform: translateY(-1px);
+}
+
+.transaction-list,
+.entity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.list-item:last-child {
+  border-bottom: 0;
+}
+
+.list-icon {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  flex: 0 0 35px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--surface-soft);
+  font-size: 16px;
+}
+
+.list-main {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.list-main strong {
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-main span {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.list-amount {
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.list-amount.income {
+  color: var(--primary);
+}
+
+.list-amount.expense {
+  color: var(--rose);
+}
+
+.list-actions {
+  display: flex;
+  gap: 5px;
+  margin-left: 4px;
+}
+
+.mini-action {
+  display: grid;
+  width: 27px;
+  height: 27px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.mini-action:hover {
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 115px;
+  padding: 18px;
+  border: 1px dashed var(--line);
+  border-radius: 15px;
+  color: var(--muted);
+  font-size: 11px;
+  text-align: center;
+}
+
+.gentle-banner {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border: 1px solid #ecd9b5;
+  border-radius: 17px;
+  background: var(--surface-warm);
+}
+
+.gentle-banner-icon {
+  display: grid;
+  width: 33px;
+  height: 33px;
+  flex: 0 0 33px;
+  place-items: center;
+  border-radius: 11px;
+  background: var(--amber-soft);
+  color: var(--amber);
+  font-size: 16px;
+}
+
+.gentle-banner-copy {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.gentle-banner-copy strong {
+  font-size: 11px;
+}
+
+.gentle-banner-copy span {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+}
+
+.data-table th {
+  padding: 0 11px 11px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.data-table td {
+  padding: 13px 11px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  font-size: 11px;
+  vertical-align: middle;
+}
+
+.data-table td strong {
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.data-table tr:hover td {
+  background: var(--surface-soft);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border-radius: 20px;
+  font-size: 9px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.badge.green {
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+}
+
+.badge.amber {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.badge.rose {
+  background: var(--rose-soft);
+  color: var(--rose);
+}
+
+.badge.blue {
+  background: var(--blue-soft);
+  color: var(--blue);
+}
+
+.badge.gray {
+  background: var(--surface-soft);
+  color: var(--muted);
+}
+
+.progress-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 150px;
+}
+
+.progress-track {
+  height: 7px;
+  flex: 1;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--surface-soft);
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+}
+
+.progress-fill.purple {
+  background: var(--lavender);
+}
+
+.progress-fill.amber {
+  background: var(--amber);
+}
+
+.progress-fill.rose {
+  background: var(--rose);
+}
+
+.progress-row span {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.paycheck-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.9fr);
+  gap: 18px;
+}
+
+.paycheck-hero {
+  padding: 25px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(140deg, #f1eafd, #fff 60%);
+  box-shadow: var(--shadow-small);
+}
+
+[data-theme="dark"] .paycheck-hero {
+  background: linear-gradient(140deg, #332e50, var(--surface) 60%);
+}
+
+.paycheck-hero .kicker {
+  color: var(--lavender);
+}
+
+.paycheck-hero h2 {
+  max-width: 470px;
+  margin: 8px 0 16px;
+  color: var(--ink);
+  font-size: clamp(24px, 3vw, 37px);
+  letter-spacing: -0.06em;
+  line-height: 1.05;
+}
+
+.kicker {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.allocation-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-top: 24px;
+}
+
+.allocation-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.allocation-line strong {
+  color: var(--ink);
+}
+
+.allocation-line.total {
+  margin-top: 5px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+  color: var(--primary-deep);
+  font-weight: 800;
+}
+
+.paycheck-next {
+  padding: 23px;
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  box-shadow: var(--shadow-small);
+}
+
+.next-payday-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 13px;
+  border-radius: 15px;
+  background: var(--surface-soft);
+}
+
+.date-tile {
+  display: grid;
+  width: 45px;
+  height: 45px;
+  flex: 0 0 45px;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.date-tile strong {
+  display: block;
+  font-size: 17px;
+  line-height: 1;
+}
+
+.next-payday-card div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.next-payday-card strong {
+  font-size: 12px;
+}
+
+.next-payday-card span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.paycheck-mini-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.paycheck-mini {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.paycheck-mini:last-child {
+  border-bottom: 0;
+}
+
+.paycheck-mini strong {
+  font-size: 11px;
+}
+
+.paycheck-mini span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.paycheck-mini-amount {
+  color: var(--primary-deep);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.calendar-card {
+  padding: 21px;
+}
+
+.calendar-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.calendar-head h2 {
+  margin: 0;
+  font-size: 17px;
+  letter-spacing: -0.04em;
+}
+
+.calendar-actions {
+  display: flex;
+  gap: 5px;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.weekday {
+  padding: 0 3px 7px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.calendar-day {
+  position: relative;
+  min-height: 82px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.calendar-day.muted {
+  opacity: 0.42;
+}
+
+.calendar-day.today {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px var(--primary-soft);
+}
+
+.calendar-day-number {
+  display: inline-grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--ink-soft);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.calendar-day.today .calendar-day-number {
+  background: var(--primary);
+  color: #fff;
+}
+
+.calendar-events {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 6px;
+}
+
+.calendar-event {
+  overflow: hidden;
+  padding: 3px 5px;
+  border-radius: 5px;
+  background: var(--surface-soft);
+  color: var(--ink-soft);
+  font-size: 8px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-event.income {
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+}
+
+.calendar-event.bill {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+.calendar-event.expense {
+  background: var(--rose-soft);
+  color: var(--rose);
+}
+
+.calendar-event.goal {
+  background: var(--lavender-soft);
+  color: var(--lavender);
+}
+
+.review-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.review-stat {
+  padding: 17px;
+  border-radius: 17px;
+  background: var(--surface-soft);
+}
+
+.review-stat span {
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.review-stat strong {
+  display: block;
+  margin-top: 8px;
+  color: var(--ink);
+  font-size: 23px;
+  letter-spacing: -0.05em;
+}
+
+.review-stat small {
+  display: block;
+  margin-top: 3px;
+  color: var(--primary);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.category-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.category-bar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.category-bar-label {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--ink-soft);
+  font-size: 10px;
+}
+
+.category-bar-label strong {
+  color: var(--ink);
+}
+
+.category-bar-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--surface-soft);
+}
+
+.category-bar-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--primary);
+}
+
+.category-bar-fill.rose {
+  background: var(--rose);
+}
+
+.category-bar-fill.amber {
+  background: var(--amber);
+}
+
+.category-bar-fill.purple {
+  background: var(--lavender);
+}
+
+.category-bar-fill.blue {
+  background: var(--blue);
+}
+
+.settings-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(270px, 0.7fr);
+  gap: 18px;
+}
+
+.settings-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.setting-row:last-child {
+  border-bottom: 0;
+}
+
+.setting-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.setting-copy strong {
+  font-size: 11px;
+}
+
+.setting-copy span {
+  max-width: 430px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.segmented {
+  display: inline-flex;
+  padding: 3px;
+  border-radius: 11px;
+  background: var(--surface-soft);
+}
+
+.segment {
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.segment.active {
+  background: var(--surface);
+  color: var(--primary-deep);
+  box-shadow: var(--shadow-small);
+}
+
+.form-control {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  outline: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.form-control::placeholder {
+  color: #a2b0aa;
+}
+
+textarea.form-control {
+  min-height: 92px;
+  resize: vertical;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.field label {
+  color: var(--ink-soft);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.field small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 13px;
+}
+
+.form-grid .full {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.checkbox-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  margin-top: 13px;
+  color: var(--ink-soft);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.checkbox-line input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--primary);
+}
+
+.checkbox-line span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.checkbox-line strong {
+  color: var(--ink);
+  font-size: 10px;
+}
+
+.checkbox-line small {
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.modal-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  padding: 20px;
+  place-items: center;
+  background: rgba(29, 44, 39, 0.42);
+  backdrop-filter: blur(8px);
+}
+
+.modal-card {
+  width: min(620px, 100%);
+  max-height: min(90vh, 780px);
+  overflow: auto;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: 23px;
+  background: var(--surface);
+  box-shadow: 0 25px 80px rgba(20, 35, 30, 0.22);
+}
+
+.modal-card.narrow {
+  width: min(450px, 100%);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 19px;
+  letter-spacing: -0.04em;
+}
+
+.modal-header p {
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.modal-close {
+  display: grid;
+  width: 31px;
+  height: 31px;
+  flex: 0 0 31px;
+  place-items: center;
+  border-radius: 10px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 17px;
+}
+
+.modal-close:hover {
+  background: var(--rose-soft);
+  color: var(--rose);
+}
+
+.formula-card {
+  padding: 16px;
+  border-radius: 15px;
+  background: var(--surface-soft);
+}
+
+.formula-line {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 8px 0;
+  color: var(--ink-soft);
+  font-size: 11px;
+}
+
+.formula-line + .formula-line {
+  border-top: 1px solid var(--line);
+}
+
+.formula-line strong {
+  color: var(--ink);
+  text-align: right;
+}
+
+.formula-total {
+  margin-top: 10px;
+  padding-top: 13px;
+  border-top: 1px solid var(--line);
+  color: var(--primary-deep);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.toast-stack {
+  position: fixed;
+  z-index: 120;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  max-width: min(360px, calc(100vw - 40px));
+  flex-direction: column;
+  gap: 8px;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  font-size: 11px;
+  font-weight: 700;
+  animation: toast-in 220ms ease both;
+}
+
+.toast-icon {
+  display: grid;
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+}
+
+.toast.warning .toast-icon {
+  background: var(--amber-soft);
+  color: var(--amber);
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.focus-overlay {
+  position: fixed;
+  z-index: 90;
+  inset: 0;
+  display: grid;
+  padding: 24px;
+  place-items: center;
+  background: rgba(26, 48, 41, 0.92);
+}
+
+.focus-box {
+  width: min(580px, 100%);
+  padding: clamp(28px, 6vw, 68px);
+  border-radius: 32px;
+  background: var(--surface);
+  text-align: center;
+  box-shadow: 0 30px 100px rgba(0, 0, 0, 0.25);
+}
+
+.focus-box .focus-symbol {
+  display: grid;
+  width: 55px;
+  height: 55px;
+  margin: 0 auto 20px;
+  place-items: center;
+  border-radius: 18px;
+  background: var(--primary-soft);
+  color: var(--primary-deep);
+  font-size: 26px;
+}
+
+.focus-box h2 {
+  margin: 0;
+  color: var(--ink);
+  font-size: 21px;
+  letter-spacing: -0.04em;
+}
+
+.focus-number {
+  margin: 16px 0 8px;
+  color: var(--primary-deep);
+  font-size: clamp(55px, 13vw, 110px);
+  font-weight: 850;
+  letter-spacing: -0.1em;
+  line-height: 0.95;
+}
+
+.focus-box p {
+  margin: 0 auto 25px;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.start-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr);
+  gap: 25px;
+  align-items: center;
+  padding: 30px;
+  border-radius: var(--radius-xl);
+  background: linear-gradient(135deg, var(--primary-soft), var(--surface));
+  box-shadow: var(--shadow-small);
+}
+
+.start-card h2 {
+  max-width: 530px;
+  margin: 8px 0 10px;
+  color: var(--ink);
+  font-size: clamp(25px, 4vw, 44px);
+  letter-spacing: -0.07em;
+  line-height: 1.03;
+}
+
+.start-card p {
+  max-width: 510px;
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.start-points {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.start-point {
+  padding: 13px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.64);
+}
+
+[data-theme="dark"] .start-point {
+  background: rgba(32, 43, 39, 0.72);
+}
+
+.start-point strong {
+  display: block;
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.start-point span {
+  display: block;
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.setup-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.setup-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  padding: 11px;
+  border-radius: 13px;
+  background: var(--surface-soft);
+}
+
+.setup-step-number {
+  display: grid;
+  width: 25px;
+  height: 25px;
+  flex: 0 0 25px;
+  place-items: center;
+  border-radius: 9px;
+  background: var(--primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.setup-step strong {
+  display: block;
+  font-size: 11px;
+}
+
+.setup-step span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+}
+
+.milestone {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  border-radius: 16px;
+  background: var(--lavender-soft);
+}
+
+.milestone-icon {
+  display: grid;
+  width: 37px;
+  height: 37px;
+  flex: 0 0 37px;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--lavender);
+  color: #fff;
+  font-size: 18px;
+}
+
+.milestone strong {
+  display: block;
+  color: var(--ink);
+  font-size: 11px;
+}
+
+.milestone span {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.pill-tabs {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 13px;
+  background: var(--surface-soft);
+}
+
+.pill-tab {
+  padding: 8px 11px;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.pill-tab.active {
+  background: var(--surface);
+  color: var(--primary-deep);
+  box-shadow: var(--shadow-small);
+}
+
+.stack-gap {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.subtle-note {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 1100px) {
+  .sidebar {
+    flex-basis: 240px;
+    width: 240px;
+  }
+
+  .topbar,
+  .app-view {
+    padding-right: 26px;
+    padding-left: 26px;
+  }
+
+  .dashboard-grid,
+  .paycheck-layout,
+  .settings-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-card,
+  .attention-card {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 820px) {
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 80;
+    width: min(290px, 88vw);
+    transform: translateX(-105%);
+    transition: transform 220ms ease;
+    box-shadow: 18px 0 55px rgba(27, 42, 36, 0.18);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-close,
+  .menu-toggle {
+    display: grid;
+  }
+
+  .menu-toggle {
+    flex: 0 0 36px;
+  }
+
+  .topbar {
+    padding-top: 18px;
+  }
+
+  .topbar-actions .soft-button {
+    padding-right: 10px;
+    padding-left: 10px;
+  }
+
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .two-column,
+  .start-card {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-day {
+    min-height: 68px;
+    padding: 5px;
+  }
+
+  .calendar-events {
+    gap: 2px;
+  }
+
+  .calendar-event {
+    max-width: 100%;
+    padding: 2px 3px;
+    font-size: 7px;
+  }
+}
+
+@media (max-width: 560px) {
+  .topbar,
+  .app-view {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
+  .topbar {
+    gap: 10px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+  }
+
+  .topbar h1 {
+    font-size: 23px;
+  }
+
+  .eyebrow {
+    max-width: 190px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .topbar-actions .soft-button {
+    width: 36px;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .topbar-actions .soft-button span {
+    font-size: 15px;
+  }
+
+  .circle-add {
+    width: 36px;
+    height: 36px;
+  }
+
+  .view-intro {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .hero-card,
+  .attention-card,
+  .content-card,
+  .paycheck-hero,
+  .paycheck-next,
+  .start-card {
+    padding: 20px;
+    border-radius: 21px;
+  }
+
+  .hero-card {
+    min-height: 270px;
+  }
+
+  .hero-number {
+    font-size: 56px;
+  }
+
+  .hero-footer {
+    margin-top: 24px;
+  }
+
+  .metric-card {
+    min-height: 93px;
+    padding: 13px;
+  }
+
+  .metric-value {
+    margin-top: 12px;
+    font-size: 19px;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .form-grid,
+  .review-grid,
+  .start-points {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid .full {
+    grid-column: auto;
+  }
+
+  .calendar-grid {
+    gap: 3px;
+  }
+
+  .weekday {
+    font-size: 7px;
+  }
+
+  .calendar-day {
+    min-height: 56px;
+    border-radius: 8px;
+  }
+
+  .calendar-day-number {
+    width: 18px;
+    height: 18px;
+    font-size: 9px;
+  }
+
+  .calendar-event {
+    display: none;
+  }
+
+  .calendar-day.has-event::after {
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--primary);
+    content: "";
+  }
+
+  .calendar-day.has-bill::after {
+    background: var(--amber);
+  }
+
+  .calendar-day.has-expense::after {
+    background: var(--rose);
+  }
+
+  .modal-backdrop {
+    padding: 10px;
+  }
+
+  .modal-card {
+    padding: 19px;
+    border-radius: 19px;
+  }
+}
+
+.demo-banner{position:sticky;top:0;z-index:9999;text-align:center;padding:10px 16px;background:var(--green,#2d6a4f);color:white;font-weight:700;font-size:14px}
+#demoUpgradeOverlay{z-index:10000}
+</style>
+</head>
+<body>
+  <div class="demo-banner">Free Demo Version — Limited Features Available. Upgrade to unlock the full experience.</div>
+  <div id="app" class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand-row">
+        <div class="brand-mark"><span>✦</span></div>
+        <div>
+          <div class="brand-name" id="brandName">CalmPocket</div>
+          <div class="brand-caption">money, made calmer</div>
+        </div>
+        <button class="icon-button sidebar-close" id="sidebarClose" aria-label="Close menu">×</button>
+      </div>
+
+      <div class="profile-mini">
+        <div class="avatar" id="avatarInitials">CP</div>
+        <div class="profile-copy">
+          <strong id="profileName">Your calm plan</strong>
+          <span id="profileMode">Simple mode</span>
+        </div>
+        <span class="status-dot" title="Saved on this device"></span>
+      </div>
+
+      <div class="nav-label">Your money</div>
+      <nav class="nav-list" id="navList" aria-label="Main navigation"></nav>
+
+      <div class="sidebar-bottom">
+        <div class="privacy-card">
+          <span class="privacy-icon">◌</span>
+          <div>
+            <strong>Private by design</strong>
+            <span>Your numbers stay on this device.</span>
+          </div>
+        </div>
+        <button class="nav-item nav-settings" data-view="settings">
+          <span class="nav-icon">⚙</span><span>Settings</span>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="icon-button menu-toggle" id="menuToggle" aria-label="Open menu">☰</button>
+          <div>
+            <div class="eyebrow" id="currentDate">Sunday, September 6, 2026</div>
+            <h1 id="viewTitle">Today</h1>
+          </div>
+        </div>
+        <div class="topbar-actions">
+          <button class="soft-button" id="focusButton"><span>◐</span> Focus mode</button>
+          <button class="circle-add" id="globalAdd" aria-label="Add a transaction">+</button>
+        </div>
+      </header>
+
+      <div class="app-view" id="appView"></div>
+    </main>
+  </div>
+
+  <div id="modalRoot"></div>
+  <div id="toastRoot" class="toast-stack" aria-live="polite"></div>
+  <input type="file" id="restoreInput" accept=".json,application/json" hidden>
+
+  <script>/* CalmPocket - offline-first ADHD and paycheck budget planner */
+(function () {
+  "use strict";
+
+  if ("serviceWorker" in navigator && location.protocol !== "file:") {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("service-worker.js").catch(function () {
+        console.warn("Offline cache could not be registered");
+      });
+    });
+  }
+
+  var APP_KEY = "calmpocket-state-v1";
+  var DB_NAME = "calmpocket-local-db";
+  var DB_STORE = "app-state";
+  var monthCursor = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+  var undoSnapshot = null;
+  var undoSnapshots = {};
+
+  var navItems = [
+    { id: "start", label: "Start here", icon: "→", essential: true },
+    { id: "today", label: "Today", icon: "⌂", essential: true },
+    { id: "paychecks", label: "Paychecks", icon: "$", essential: true },
+    { id: "bills", label: "Bills", icon: "✓", essential: true },
+    { id: "spend", label: "Spending", icon: "↗", essential: true },
+    { id: "brain", label: "Brain dump", icon: "✎", essential: true },
+    { id: "envelopes", label: "Envelopes", icon: "▱", essential: false },
+    { id: "goals", label: "Savings goals", icon: "◎", essential: false },
+    { id: "debt", label: "Debt tracker", icon: "↘", essential: false },
+    { id: "calendar", label: "Calendar", icon: "□", essential: false },
+    { id: "review", label: "Monthly review", icon: "▥", essential: false },
+    { id: "accounts", label: "Accounts", icon: "◈", essential: false }
+  ];
+
+  var categoryIcons = {
+    Groceries: "🛒",
+    Fuel: "⛽",
+    Entertainment: "◉",
+    Subscriptions: "↻",
+    "Personal spending": "♡",
+    Household: "⌂",
+    Clothing: "◇",
+    Medical: "+",
+    Housing: "▦",
+    Utilities: "ϟ",
+    Transport: "→",
+    Other: "•"
+  };
+
+  var currencySymbols = {
+    USD: "$",
+    CAD: "CA$",
+    GBP: "£",
+    EUR: "€",
+    AUD: "A$",
+    NZD: "NZ$",
+    INR: "₹",
+    JPY: "¥"
+  };
+
+  function uid(prefix) {
+    return (prefix || "id") + "-" + Math.random().toString(36).slice(2, 9) + "-" + Date.now().toString(36).slice(-4);
+  }
+
+  function todayISO() {
+    return isoDate(new Date());
+  }
+
+  function parseDate(value) {
+    if (!value) return new Date();
+    var parts = String(value).split("-");
+    if (parts.length === 3) {
+      return new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+    }
+    return new Date(value);
+  }
+
+  function isoDate(date) {
+    var d = new Date(date);
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  function addDays(value, amount) {
+    var date = parseDate(value);
+    date.setDate(date.getDate() + Number(amount || 0));
+    return date;
+  }
+
+  function addMonths(value, amount) {
+    var date = parseDate(value);
+    date.setMonth(date.getMonth() + Number(amount || 0));
+    return date;
+  }
+
+  function dateDiff(from, to) {
+    var a = parseDate(from);
+    var b = parseDate(to);
+    return Math.round((b.getTime() - a.getTime()) / 86400000);
+  }
+
+  function num(value) {
+    var result = Number(value);
+    return Number.isFinite(result) ? result : 0;
+  }
+
+  function esc(value) {
+    return String(value === undefined || value === null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function formatMoney(value) {
+    var amount = num(value);
+    var code = state.profile.currency || "USD";
+    try {
+      return new Intl.NumberFormat(undefined, {
+        style: "currency",
+        currency: code,
+        maximumFractionDigits: 2
+      }).format(amount);
+    } catch (error) {
+      return (currencySymbols[code] || "$") + amount.toFixed(2);
+    }
+  }
+
+  function formatCompactMoney(value) {
+    var amount = num(value);
+    var symbol = currencySymbols[state.profile.currency || "USD"] || "$";
+    if (Math.abs(amount) >= 1000) {
+      return symbol + (amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1) + "k";
+    }
+    return symbol + Math.round(amount).toLocaleString();
+  }
+
+  function formatDate(value, options) {
+    if (!value) return "No date";
+    var settings = options || { month: "short", day: "numeric" };
+    return parseDate(value).toLocaleDateString(undefined, settings);
+  }
+
+  function formatLongDate(value) {
+    if (!value) return "No date";
+    return parseDate(value).toLocaleDateString(undefined, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    });
+  }
+
+  function monthLabel(date) {
+    return parseDate(date).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+  }
+
+  function shortMonth(value) {
+    return parseDate(value).toLocaleDateString(undefined, { month: "short" });
+  }
+
+  function dayNumber(value) {
+    return parseDate(value).getDate();
+  }
+
+  function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+  }
+
+  function sum(list, getter) {
+    return (list || []).reduce(function (total, item) {
+      return total + num(getter ? getter(item) : item);
+    }, 0);
+  }
+
+  function getInitials(value) {
+    var words = String(value || "Calm plan").trim().split(/\s+/).filter(Boolean);
+    if (!words.length) return "CP";
+    return words.slice(0, 2).map(function (word) { return word.charAt(0); }).join("").toUpperCase();
+  }
+
+  function categoryIcon(category) {
+    return categoryIcons[category] || "•";
+  }
+
+  function frequencyLabel(value) {
+    var labels = {
+      weekly: "Every week",
+      biweekly: "Every 2 weeks",
+      semimonthly: "Twice monthly",
+      monthly: "Every month",
+      quarterly: "Every 3 months",
+      annual: "Every year",
+      once: "One time",
+      irregular: "Irregular"
+    };
+    return labels[value] || value || "Flexible";
+  }
+
+  function typeLabel(value) {
+    var labels = {
+      checking: "Checking",
+      savings: "Savings",
+      cash: "Cash",
+      credit: "Credit card",
+      other: "Other"
+    };
+    return labels[value] || value || "Account";
+  }
+
+  function sampleState() {
+    var now = new Date();
+    var today = isoDate(now);
+    var payday = isoDate(addDays(today, 5));
+    return {
+      version: 2,
+      view: "today",
+      lastOpened: today,
+      lastSaved: null,
+      profile: {
+        name: "Your calm plan",
+        appName: "CalmPocket",
+        currency: "USD",
+        payFrequency: "biweekly",
+        nextPayday: payday,
+        safetyBuffer: 250,
+        theme: "light",
+        mode: "simple",
+        sampleMode: true,
+        debtMethod: "snowball"
+      },
+      ui: {
+        focusMode: false,
+        awayDays: 0,
+        reviewMonth: today.slice(0, 7)
+      },
+      accounts: [
+        { id: "acc-checking", name: "Main checking", type: "checking", balance: 1460, includeInSpendable: true },
+        { id: "acc-cash", name: "Cash wallet", type: "cash", balance: 60, includeInSpendable: true },
+        { id: "acc-savings", name: "Emergency savings", type: "savings", balance: 850, includeInSpendable: false },
+        { id: "acc-card", name: "Credit card", type: "credit", balance: 420, includeInSpendable: false }
+      ],
+      paychecks: [
+        { id: "pay-1", name: "Main paycheck", source: "Work", amount: 1800, expected: 1800, actual: 0, date: payday, frequency: "biweekly", status: "upcoming", recurring: true },
+        { id: "pay-2", name: "Main paycheck", source: "Work", amount: 1800, expected: 1800, actual: 0, date: isoDate(addDays(payday, 14)), frequency: "biweekly", status: "upcoming", recurring: true },
+        { id: "pay-3", name: "Main paycheck", source: "Work", amount: 1800, expected: 1800, actual: 0, date: isoDate(addDays(payday, 28)), frequency: "biweekly", status: "upcoming", recurring: true }
+      ],
+      bills: [
+        { id: "bill-electric", name: "Electric bill", amount: 90, dueDate: isoDate(addDays(today, 2)), frequency: "monthly", autopay: true, paid: false, accountId: "acc-checking", notes: "Estimate", setAside: false },
+        { id: "bill-phone", name: "Phone plan", amount: 65, dueDate: isoDate(addDays(today, 4)), frequency: "monthly", autopay: true, paid: false, accountId: "acc-checking", notes: "", setAside: false },
+        { id: "bill-rent", name: "Rent", amount: 1050, dueDate: isoDate(addDays(today, 7)), frequency: "monthly", autopay: true, paid: false, accountId: "acc-checking", notes: "", setAside: true },
+        { id: "bill-insurance", name: "Car insurance", amount: 140, dueDate: isoDate(addDays(today, 12)), frequency: "quarterly", autopay: false, paid: false, accountId: "acc-checking", notes: "Quarterly payment", setAside: true }
+      ],
+      expenses: [
+        { id: "exp-1", name: "Groceries", amount: 72.40, category: "Groceries", date: isoDate(addDays(today, -1)), accountId: "acc-checking", paymentMethod: "Debit card", note: "Weekly shop", recurring: false },
+        { id: "exp-2", name: "Fuel", amount: 42.00, category: "Fuel", date: isoDate(addDays(today, -2)), accountId: "acc-checking", paymentMethod: "Debit card", note: "", recurring: false },
+        { id: "exp-3", name: "Coffee", amount: 11.50, category: "Personal spending", date: isoDate(addDays(today, -3)), accountId: "acc-cash", paymentMethod: "Cash", note: "", recurring: false },
+        { id: "exp-4", name: "Streaming", amount: 15.99, category: "Subscriptions", date: isoDate(addDays(today, -5)), accountId: "acc-card", paymentMethod: "Credit card", note: "Monthly subscription", recurring: true },
+        { id: "exp-5", name: "Household supplies", amount: 34.80, category: "Household", date: isoDate(addDays(today, -8)), accountId: "acc-checking", paymentMethod: "Debit card", note: "", recurring: false }
+      ],
+      envelopes: [
+        { id: "env-groceries", name: "Groceries", limit: 480, reserved: 120, icon: "🛒" },
+        { id: "env-fuel", name: "Fuel", limit: 180, reserved: 45, icon: "⛽" },
+        { id: "env-fun", name: "Fun money", limit: 120, reserved: 25, icon: "◉" },
+        { id: "env-personal", name: "Personal spending", limit: 160, reserved: 30, icon: "♡" }
+      ],
+      goals: [
+        { id: "goal-emergency", name: "Emergency cushion", target: 2000, saved: 850, targetDate: isoDate(addMonths(today, 8)), perPaycheck: 100, icon: "✦" },
+        { id: "goal-holidays", name: "Holiday fund", target: 800, saved: 260, targetDate: isoDate(addMonths(today, 4)), perPaycheck: 50, icon: "◇" }
+      ],
+      debts: [
+        { id: "debt-card", creditor: "Everyday credit card", balance: 4200, originalBalance: 5200, apr: 22.9, minimum: 85, dueDate: isoDate(addDays(today, 3)), extra: 50, method: "snowball", payments: [] },
+        { id: "debt-student", creditor: "Student loan", balance: 7800, originalBalance: 9000, apr: 5.1, minimum: 120, dueDate: isoDate(addDays(today, 10)), extra: 0, method: "snowball", payments: [] }
+      ],
+      brainDump: [
+        { id: "brain-1", text: "Check if the annual cloud storage renewal is still needed", createdAt: isoDate(addDays(today, -1)), done: false }
+      ],
+      impulses: [
+        { id: "impulse-1", item: "New desk lamp", amount: 48, createdAt: isoDate(addDays(today, -1)), waitHours: 24, status: "waiting" }
+      ],
+      reviewNotes: {}
+    };
+  }
+
+  function defaultState() {
+    var now = new Date();
+    var today = isoDate(now);
+    return {
+      version: 2,
+      view: "start",
+      lastOpened: today,
+      lastSaved: null,
+      profile: {
+        name: "Your calm plan",
+        appName: "CalmPocket",
+        currency: "USD",
+        payFrequency: "biweekly",
+        nextPayday: today,
+        safetyBuffer: 0,
+        theme: "light",
+        mode: "simple",
+        sampleMode: false,
+        debtMethod: "snowball"
+      },
+      ui: {
+        focusMode: false,
+        awayDays: 0,
+        reviewMonth: today.slice(0, 7)
+      },
+      accounts: [],
+      paychecks: [],
+      bills: [],
+      expenses: [],
+      envelopes: [],
+      goals: [],
+      debts: [],
+      brainDump: [],
+      impulses: [],
+      reviewNotes: {}
+    };
+  }
+
+  function blankState() {
+    var fresh = defaultState();
+    fresh.profile.name = "Your calm plan";
+    fresh.profile.sampleMode = false;
+    fresh.profile.safetyBuffer = 0;
+    fresh.accounts = [];
+    fresh.paychecks = [];
+    fresh.bills = [];
+    fresh.expenses = [];
+    fresh.envelopes = [];
+    fresh.goals = [];
+    fresh.debts = [];
+    fresh.brainDump = [];
+    fresh.impulses = [];
+    fresh.reviewNotes = {};
+    return fresh;
+  }
+
+  function mergeState(saved) {
+    var base = defaultState();
+    if (!saved || typeof saved !== "object") return base;
+    Object.keys(base).forEach(function (key) {
+      if (saved[key] !== undefined) base[key] = saved[key];
+    });
+    base.profile = Object.assign(defaultState().profile, saved.profile || {});
+    base.ui = Object.assign(defaultState().ui, saved.ui || {});
+    ["accounts", "paychecks", "bills", "expenses", "envelopes", "goals", "debts", "brainDump", "impulses"].forEach(function (key) {
+      if (!Array.isArray(base[key])) base[key] = [];
+    });
+    if (!base.reviewNotes || typeof base.reviewNotes !== "object") base.reviewNotes = {};
+    return base;
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(APP_KEY);
+      if (raw) {
+        var saved = JSON.parse(raw);
+        // Version 1 opened with demo numbers. Do not silently carry that demo
+        // data into the new empty-first experience.
+        if (saved && saved.version === 1 && saved.profile && saved.profile.sampleMode) {
+          return defaultState();
+        }
+        return mergeState(saved);
+      }
+    } catch (error) {
+      console.warn("Could not load local state", error);
+    }
+    return defaultState();
+  }
+
+  function saveState() {
+    state.lastSaved = new Date().toISOString();
+    try {
+      localStorage.setItem(APP_KEY, JSON.stringify(state));
+    } catch (error) {
+      console.warn("Could not save local state", error);
+    }
+    saveIndexedDB();
+  }
+
+  function saveIndexedDB() {
+    if (!window.indexedDB) return;
+    try {
+      var request = indexedDB.open(DB_NAME, 1);
+      request.onupgradeneeded = function (event) {
+        if (!event.target.result.objectStoreNames.contains(DB_STORE)) {
+          event.target.result.createObjectStore(DB_STORE);
+        }
+      };
+      request.onsuccess = function (event) {
+        var db = event.target.result;
+        try {
+          var transaction = db.transaction(DB_STORE, "readwrite");
+          transaction.objectStore(DB_STORE).put(JSON.stringify(state), "current");
+        } catch (error) {
+          console.warn("IndexedDB save skipped", error);
+        }
+      };
+    } catch (error) {
+      console.warn("IndexedDB unavailable", error);
+    }
+  }
+
+  
+  // Permanent demo mode restrictions
+  var DEMO_MODE = true;
+  var DEMO_LIMITS = { paychecks: 3, bills: 5, debts: 2, goals: 2, envelopes: 2, expenses: 5 };
+  function demoUpgradePopup(message) {
+    var old = document.getElementById("demoUpgradeOverlay");
+    if (old) old.remove();
+    var div = document.createElement("div");
+    div.id = "demoUpgradeOverlay";
+    div.className = "modal-backdrop";
+    div.innerHTML = "<div class='modal-card'><h2>Demo Limit Reached</h2><p>" + (message || "You have reached the maximum number of items available in the free demo. Purchase to unlock more features.") + "</p><p class='subtle-note'>Purchase to unlock more features.</p><button class='primary-button' onclick=\"document.getElementById('demoUpgradeOverlay').remove()\">Close</button></div>";
+    document.body.appendChild(div);
+  }
+  function demoCanCreate(type) {
+    var map = {paycheck:"paychecks", bill:"bills", debt:"debts", goal:"goals", envelope:"envelopes", expense:"expenses"};
+    var key = map[type];
+    if (!key) return true;
+    if ((state[key] || []).length >= DEMO_LIMITS[key]) {
+      demoUpgradePopup("You have reached the maximum number of " + key + " available in the free demo.");
+      return false;
+    }
+    return true;
+  }
+
+  var state = loadState();
+  var previousOpened = state.lastOpened;
+  state.ui.awayDays = previousOpened ? Math.max(0, dateDiff(previousOpened, todayISO())) : 0;
+  state.lastOpened = todayISO();
+  saveState();
+
+  function spendableBalance() {
+    return sum(state.accounts.filter(function (account) {
+      return account.includeInSpendable && account.type !== "credit";
+    }), function (account) { return account.balance; });
+  }
+
+  function accountName(id) {
+    var account = state.accounts.find(function (item) { return item.id === id; });
+    return account ? account.name : "Unassigned";
+  }
+
+  function valueOfPaycheck(paycheck) {
+    return num(paycheck.actual > 0 ? paycheck.actual : (paycheck.expected || paycheck.amount));
+  }
+
+  function paycheckDate(paycheck) {
+    if (!paycheck || !paycheck.date) return todayISO();
+    return isoDate(addDays(paycheck.date, -Math.max(0, num(paycheck.earlyPayDays))));
+  }
+
+  function nextPayday() {
+    var today = todayISO();
+    var future = state.paychecks
+      .filter(function (paycheck) { return paycheckDate(paycheck) >= today && paycheck.status !== "cancelled"; })
+      .sort(function (a, b) { return paycheckDate(a).localeCompare(paycheckDate(b)); });
+    return future.length ? future[0] : { date: state.profile.nextPayday || today, name: "Next payday", amount: 0 };
+  }
+
+  function billsBefore(date) {
+    var today = todayISO();
+    return state.bills.filter(function (bill) {
+      return !bill.paid && bill.dueDate >= today && bill.dueDate <= date;
+    });
+  }
+
+  function incomeBefore(date) {
+    var today = todayISO();
+    return state.paychecks.filter(function (paycheck) {
+      var arrival = paycheckDate(paycheck);
+      return arrival > today && arrival <= date && paycheck.status !== "cancelled";
+    });
+  }
+
+  function debtDueBefore(date) {
+    var today = todayISO();
+    return state.debts.filter(function (debt) {
+      return debt.dueDate && debt.dueDate >= today && debt.dueDate <= date;
+    });
+  }
+
+  function calculateBudget() {
+    var payday = nextPayday();
+    var paydayDate = paycheckDate(payday);
+    var days = Math.max(1, dateDiff(todayISO(), paydayDate));
+    var balance = spendableBalance();
+    var incoming = sum(incomeBefore(paydayDate), valueOfPaycheck);
+    var bills = sum(billsBefore(paydayDate), function (bill) { return bill.amount; });
+    var envelopes = sum(state.envelopes, function (envelope) { return envelope.reserved; });
+    var goals = sum(state.goals, function (goal) { return goal.perPaycheck; });
+    var debt = sum(debtDueBefore(paydayDate), function (item) { return item.minimum + item.extra; });
+    var buffer = num(state.profile.safetyBuffer);
+    var safeUntil = balance + incoming - bills - envelopes - goals - debt - buffer;
+    var safeToday = Math.max(0, safeUntil / days);
+    return {
+      payday: payday,
+      paydayDate: paydayDate,
+      days: days,
+      balance: balance,
+      incoming: incoming,
+      bills: bills,
+      envelopes: envelopes,
+      goals: goals,
+      debt: debt,
+      buffer: buffer,
+      safeUntil: safeUntil,
+      safeToday: safeToday
+    };
+  }
+
+  function monthRange(date) {
+    var d = parseDate(date || todayISO());
+    var first = new Date(d.getFullYear(), d.getMonth(), 1);
+    var last = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    return { first: isoDate(first), last: isoDate(last) };
+  }
+
+  function monthExpenses(date) {
+    var range = monthRange(date);
+    return state.expenses.filter(function (item) {
+      return item.date >= range.first && item.date <= range.last;
+    });
+  }
+
+  function monthIncome(date) {
+    var range = monthRange(date);
+    return state.paychecks.filter(function (item) {
+      var arrival = paycheckDate(item);
+      return arrival >= range.first && arrival <= range.last && item.status !== "cancelled";
+    });
+  }
+
+  function monthPaidBills(date) {
+    var range = monthRange(date);
+    return state.bills.filter(function (item) {
+      return item.dueDate >= range.first && item.dueDate <= range.last && item.paid;
+    });
+  }
+
+  function categorySpent(category, date) {
+    return sum(monthExpenses(date).filter(function (expense) {
+      return expense.category === category;
+    }), function (expense) { return expense.amount; });
+  }
+
+  function totalDebt() {
+    return sum(state.debts, function (debt) { return debt.balance; });
+  }
+
+  function totalSaved() {
+    return sum(state.goals, function (goal) { return goal.saved; });
+  }
+
+  function upcomingBills(days) {
+    var end = isoDate(addDays(todayISO(), days));
+    return state.bills.filter(function (bill) {
+      return !bill.paid && bill.dueDate >= todayISO() && bill.dueDate <= end;
+    }).sort(function (a, b) { return a.dueDate.localeCompare(b.dueDate); });
+  }
+
+  function showToast(message, type, undoSnapshotValue) {
+    var root = document.getElementById("toastRoot");
+    var item = document.createElement("div");
+    var undoId = "";
+    if (undoSnapshotValue) {
+      undoId = uid("undo");
+      undoSnapshots[undoId] = undoSnapshotValue;
+    }
+    item.className = "toast " + (type === "warning" ? "warning" : "");
+    item.innerHTML = "<span class='toast-icon'>" + (type === "warning" ? "!" : "✓") + "</span><span>" + esc(message) + "</span>" + (undoId ? "<button class='text-button toast-undo' data-action='undo' data-undo-id='" + undoId + "'>Undo</button>" : "");
+    root.appendChild(item);
+    window.setTimeout(function () {
+      if (undoId) delete undoSnapshots[undoId];
+      item.style.opacity = "0";
+      item.style.transform = "translateY(8px)";
+      window.setTimeout(function () { item.remove(); }, 220);
+    }, 2800);
+  }
+
+  function renderNav() {
+    var root = document.getElementById("navList");
+    var simple = state.profile.mode === "simple";
+    var visible = navItems.filter(function (item) { return !simple || item.essential; });
+    var dueCount = upcomingBills(7).length;
+    var brainCount = state.brainDump.filter(function (item) { return !item.done; }).length;
+    root.innerHTML = visible.map(function (item) {
+      var badge = item.id === "bills" && dueCount ? "<span class='nav-badge'>" + dueCount + "</span>" :
+        item.id === "brain" && brainCount ? "<span class='nav-badge'>" + brainCount + "</span>" : "";
+      return "<button class='nav-item " + (state.view === item.id ? "active" : "") + "' data-view='" + item.id + "'>" +
+        "<span class='nav-icon'>" + item.icon + "</span><span>" + item.label + "</span>" + badge + "</button>";
+    }).join("");
+    if (simple) {
+      root.innerHTML += "<button class='nav-item' data-action='show-everything'><span class='nav-icon'>＋</span><span>See everything</span></button>";
+    }
+  }
+
+  function renderShell() {
+    document.body.setAttribute("data-theme", state.profile.theme || "light");
+    document.getElementById("brandName").textContent = state.profile.appName || "CalmPocket";
+    document.getElementById("profileName").textContent = state.profile.name || "Your calm plan";
+    document.getElementById("profileMode").textContent = state.profile.mode === "simple" ? "Simple mode" : "Everything mode";
+    document.getElementById("avatarInitials").textContent = getInitials(state.profile.name);
+    document.getElementById("currentDate").textContent = formatLongDate(todayISO());
+    var titleMap = {
+      start: "Start here",
+      today: "Today",
+      paychecks: "Paychecks",
+      bills: "Bills",
+      spend: "Spending",
+      brain: "Brain dump",
+      envelopes: "Envelopes",
+      goals: "Savings goals",
+      debt: "Debt tracker",
+      calendar: "Financial calendar",
+      review: "Monthly review",
+      accounts: "Accounts",
+      settings: "Settings"
+    };
+    document.getElementById("viewTitle").textContent = titleMap[state.view] || "Today";
+    renderNav();
+    document.getElementById("appView").innerHTML = renderView(state.view);
+    renderFocusOverlay();
+  }
+
+  function renderView(view) {
+    if (view === "start") return renderStart();
+    if (view === "paychecks") return renderPaychecks();
+    if (view === "bills") return renderBills();
+    if (view === "spend") return renderSpend();
+    if (view === "brain") return renderBrain();
+    if (view === "envelopes") return renderEnvelopes();
+    if (view === "goals") return renderGoals();
+    if (view === "debt") return renderDebt();
+    if (view === "calendar") return renderCalendar();
+    if (view === "review") return renderReview();
+    if (view === "accounts") return renderAccounts();
+    if (view === "settings") return renderSettings();
+    return renderToday();
+  }
+
+  function viewIntro(title, description, actionLabel, action) {
+    return "<div class='view-intro'><div><h2>" + esc(title) + "</h2><p>" + esc(description) + "</p></div>" +
+      (actionLabel ? "<div class='view-actions'><button class='primary-button' data-action='" + action + "'>＋ " + esc(actionLabel) + "</button></div>" : "") +
+      "</div>";
+  }
+
+  function gentleBanner(title, text, actionLabel, action) {
+    return "<div class='gentle-banner'><div class='gentle-banner-icon'>✦</div><div class='gentle-banner-copy'><strong>" + esc(title) + "</strong><span>" + esc(text) + "</span></div>" +
+      (actionLabel ? "<button class='secondary-button' data-action='" + action + "'>" + esc(actionLabel) + "</button>" : "") + "</div>";
+  }
+
+  function emptyState(text, actionLabel, action) {
+    return "<div class='empty-state'><div>" + esc(text) + (actionLabel ? "<br><button class='text-button' data-action='" + action + "'>" + esc(actionLabel) + "</button>" : "") + "</div></div>";
+  }
+
+  function miniMetric(label, value, icon, color, foot) {
+    return "<div class='metric-card'><div class='metric-top'><span class='metric-label'>" + esc(label) + "</span><span class='metric-icon " + color + "'>" + icon + "</span></div>" +
+      "<strong class='metric-value'>" + value + "</strong><div class='metric-foot'>" + esc(foot || "") + "</div></div>";
+  }
+
+  function renderFocusOverlay() {
+    var root = document.getElementById("modalRoot");
+    var existing = root.querySelector(".focus-overlay");
+    if (!state.ui.focusMode) {
+      if (existing) existing.remove();
+      return;
+    }
+    var budget = calculateBudget();
+    var html = "<div class='focus-overlay'><div class='focus-box'><div class='focus-symbol'>◐</div><h2>One calm number for right now</h2>" +
+      "<div class='focus-number'>" + formatMoney(budget.safeToday) + "</div><p>Safe to spend today · " + budget.days + " days until " + esc(formatDate(budget.paydayDate)) + "</p>" +
+      "<button class='primary-button' data-action='close-focus'>Back to my plan</button></div></div>";
+    if (existing) existing.outerHTML = html;
+    else root.insertAdjacentHTML("beforeend", html);
+  }
+
+  function renderStart() {
+    var profile = state.profile;
+    var html = "<div class='start-card'><div><div class='kicker' style='color:var(--primary)'>Start here · 3 calm steps</div><h2>Build a money plan you can actually come back to.</h2><p>CalmPocket keeps the important number visible, lets you enter sample data first, and gives every unfinished thought somewhere to land.</p><div class='view-actions' style='margin-top:22px'><button class='primary-button' data-action='setup'>" + (profile.sampleMode ? "Start with my numbers" : "Set up my plan") + "</button><button class='secondary-button' data-view='today'>Go to today</button></div></div><div class='start-points'><div class='start-point'><strong>1 · Set the basics</strong><span>Starting balance, currency, next payday, and pay frequency.</span></div><div class='start-point'><strong>2 · Add must-pays</strong><span>Put bills, debts, and savings goals where you can see them.</span></div><div class='start-point'><strong>3 · Choose your mode</strong><span>Simple for less noise. Everything when you want the full picture.</span></div><div class='start-point'><strong>Any time · Back up</strong><span>Download a private JSON copy from Settings before changing devices.</span></div></div></div>";
+    html += "<div class='two-column'><section class='content-card'><div class='card-title-row'><div><h3>Optional sample plan</h3><p class='subtle-note' style='margin:5px 0 0'>The planner starts empty. Load examples only if you want a guided tour.</p></div><button class='secondary-button' data-action='load-sample'>Preview sample</button><button class='text-button' data-action='clear-sample'>Clear sample</button></div><div class='setup-steps'><div class='setup-step'><div class='setup-step-number'>✓</div><div><strong>Safe-to-spend calculation</strong><span>See the full formula with example checking, bills, a paycheck, goals, debt, and buffer.</span></div></div><div class='setup-step'><div class='setup-step-number'>✓</div><div><strong>ADHD-friendly shortcuts</strong><span>Quick-add buttons, Focus mode, Brain dump, impulse pauses, and gentle catch-up.</span></div></div><div class='setup-step'><div class='setup-step-number'>✓</div><div><strong>Editable everywhere</strong><span>Every sample number can be changed or removed after setup.</span></div></div></div></section><section class='content-card'><div class='card-title-row'><h3>Your current starting point</h3><span class='badge " + (profile.sampleMode ? "amber" : "green") + "'>" + (profile.sampleMode ? "sample" : "personal") + "</span></div><div class='setting-row'><div class='setting-copy'><strong>Spendable balance</strong><span>Accounts currently included in safe-to-spend.</span></div><strong>" + formatMoney(spendableBalance()) + "</strong></div><div class='setting-row'><div class='setting-copy'><strong>Next payday</strong><span>" + formatDate(profile.nextPayday, { month: "long", day: "numeric", year: "numeric" }) + " · " + esc(frequencyLabel(profile.payFrequency)) + "</span></div><button class='text-button' data-action='setup'>Edit</button></div><div class='setting-row'><div class='setting-copy'><strong>Safety buffer</strong><span>Kept out of the promise-to-spend number.</span></div><strong>" + formatMoney(profile.safetyBuffer) + "</strong></div></section></div>";
+    html += "<section class='content-card' style='margin-top:18px'><div class='card-title-row'><h3>When you come back after a gap</h3><span class='badge green'>gentle reset</span></div><p class='subtle-note'>CalmPocket will offer “Continue from today” after a few days away. You can update one balance or bill and keep going; there is no missed-day penalty.</p></section>";
+    return html;
+  }
+
+  function renderToday() {
+    var budget = calculateBudget();
+    var month = todayISO().slice(0, 7);
+    var monthIn = sum(monthIncome(todayISO()), valueOfPaycheck);
+    var monthOut = sum(monthExpenses(todayISO()), function (item) { return item.amount; }) +
+      sum(monthPaidBills(todayISO()), function (item) { return item.amount; });
+    var nextBill = upcomingBills(30)[0];
+    var sample = state.profile.sampleMode;
+    var away = !sample && state.ui.awayDays >= 3;
+    var html = viewIntro(
+      "A calmer money check-in",
+      "See what matters now, log spending quickly, and make your next payday feel more predictable.",
+      "Add transaction",
+      "add-expense"
+    );
+
+    if (sample) {
+      html += gentleBanner(
+        "You are exploring sample numbers",
+        "Tap start with my numbers whenever you are ready. Nothing here is connected to a bank.",
+        "Start my plan",
+        "setup"
+      );
+    } else if (away) {
+      html += gentleBanner(
+        "Welcome back. Nothing is broken.",
+        "You have been away for " + state.ui.awayDays + " days. Update the few numbers that changed and continue from today.",
+        "Catch me up",
+        "catch-up"
+      );
+    }
+
+    var safePercent = budget.safeUntil > 0 ? clamp((budget.safeToday / Math.max(1, budget.balance + budget.incoming)) * 100, 7, 100) : 7;
+    html += "<div class='dashboard-grid'>" +
+      "<section class='hero-card'><div class='hero-head'><div><div class='hero-kicker'>Safe to spend today</div><h2>One number. Less second-guessing.</h2></div>" +
+      "<button class='hero-info' data-action='formula'>ⓘ How is this worked out?</button></div>" +
+      "<div class='hero-number'>" + formatMoney(budget.safeToday) + "</div><div class='hero-note'>after upcoming bills, set-asides, goals, debt and your buffer</div>" +
+      "<div class='hero-footer'><div class='hero-subnumber'><span>Safe until next payday</span><strong>" + formatMoney(budget.safeUntil) + "</strong></div>" +
+      "<div class='hero-bar'><div class='hero-bar-label'><span>" + budget.days + " days to payday</span><span>" + esc(formatDate(budget.paydayDate)) + "</span></div><div class='bar-track'><div class='bar-fill' style='width:" + safePercent + "%'></div></div></div></div></section>" +
+      "<section class='attention-card'><div class='card-title-row'><h3>Needs your attention</h3><button class='text-button' data-view='bills'>See bills</button></div>" +
+      renderAttentionItems(budget, nextBill) + "</section></div>";
+
+    html += "<div class='metric-grid'>" +
+      miniMetric("Money in this month", formatMoney(monthIn), "↗", "green", "planned income") +
+      miniMetric("Money out", formatMoney(monthOut), "↘", "rose", "expenses + paid bills") +
+      miniMetric("Bills coming soon", formatMoney(sum(upcomingBills(7), function (item) { return item.amount; })), "✓", "orange", upcomingBills(7).length + " to review") +
+      miniMetric("Set aside", formatMoney(sum(state.envelopes, function (item) { return item.reserved; }) + totalSaved()), "◎", "purple", "envelopes + goals") +
+      "</div>";
+
+    html += "<div class='two-column'><section class='content-card'><div class='card-title-row'><h3>Quick add spending</h3><button class='text-button' data-action='add-expense'>Add exact amount</button></div>" +
+      "<p class='subtle-note'>Keep it easy. You can always add the category or note later.</p><div class='quick-add-wrap' style='margin-top:15px'>" +
+      [5, 10, 20, 50].map(function (amount) {
+        return "<button class='quick-chip' data-action='quick-expense' data-amount='" + amount + "'>+" + formatMoney(amount) + "</button>";
+      }).join("") +
+      "</div><div class='section-heading'><div><h3>Recent spending</h3><p>The last few things you logged</p></div><button class='text-button' data-view='spend'>View all</button></div>" +
+      renderRecentExpenses(5) + "</section>" +
+      "<section class='content-card'><div class='card-title-row'><h3>Your next payday</h3><button class='text-button' data-view='paychecks'>Plan it</button></div>" +
+      renderNextPaydayCard(budget) + renderRunway(budget) + "</section></div>";
+
+    html += "<div class='two-column'><section class='content-card'><div class='card-title-row'><h3>A small win</h3><button class='text-button' data-view='goals'>See goals</button></div>" +
+      renderMilestone() + "</section><section class='content-card'><div class='card-title-row'><h3>Money at a glance</h3><button class='text-button' data-view='review'>Review month</button></div>" +
+      renderMiniCategoryBars() + "</section></div>";
+
+    return html;
+  }
+
+  function renderAttentionItems(budget, nextBill) {
+    var items = [];
+    var soon = upcomingBills(7);
+    if (soon.length) {
+      var bill = soon[0];
+      items.push({
+        icon: "✓",
+        title: bill.name,
+        text: formatMoney(bill.amount) + " due " + formatDate(bill.dueDate) + (bill.autopay ? " · autopay" : ""),
+        view: "bills"
+      });
+    }
+    var unsorted = state.brainDump.filter(function (item) { return !item.done; });
+    if (unsorted.length) {
+      items.push({ icon: "✎", title: "One thought is waiting", text: unsorted[0].text, view: "brain" });
+    }
+    if (budget.safeUntil < 0) {
+      items.push({ icon: "◌", title: "A little tighter than planned", text: "Review one bill or set-aside. No shame, just a small adjustment.", view: "paychecks" });
+    } else if (nextBill && !soon.length) {
+      items.push({ icon: "◎", title: "You have breathing room", text: "Your next bill is " + formatDate(nextBill.dueDate) + ". Keep the plan simple.", view: "today" });
+    } else {
+      items.push({ icon: "✦", title: "Choose one small next step", text: "Log one purchase or check one bill.", view: "spend" });
+    }
+    return "<div class='attention-list'>" + items.slice(0, 3).map(function (item) {
+      return "<button class='attention-item' data-view='" + item.view + "'><span class='attention-icon'>" + item.icon + "</span><span class='attention-copy'><strong>" +
+        esc(item.title) + "</strong><span>" + esc(item.text) + "</span></span><span class='attention-arrow'>›</span></button>";
+    }).join("") + "</div>";
+  }
+
+  function renderRecentExpenses(limit) {
+    var expenses = state.expenses.slice().sort(function (a, b) { return b.date.localeCompare(a.date); }).slice(0, limit || 5);
+    if (!expenses.length) return emptyState("Your spending log is clear for now.", "Add your first spend", "add-expense");
+    return "<div class='transaction-list'>" + expenses.map(function (expense) {
+      return "<div class='list-item'><div class='list-icon'>" + categoryIcon(expense.category) + "</div><div class='list-main'><strong>" +
+        esc(expense.name || expense.category) + "</strong><span>" + esc(expense.category) + " · " + formatDate(expense.date) + "</span></div><span class='list-amount expense'>-" +
+        formatMoney(expense.amount) + "</span></div>";
+    }).join("") + "</div>";
+  }
+
+  function renderNextPaydayCard(budget) {
+    var date = parseDate(budget.paydayDate);
+    var weekday = date.toLocaleDateString(undefined, { weekday: "short" });
+    return "<div class='next-payday-card'><div class='date-tile'>" + esc(weekday) + "<strong>" + dayNumber(budget.paydayDate) + "</strong></div>" +
+      "<div><strong>" + esc(budget.payday.name || "Next paycheck") + "</strong><span>" + formatDate(budget.paydayDate, { month: "long", day: "numeric", year: "numeric" }) + " · " +
+      (budget.payday.amount ? formatMoney(valueOfPaycheck(budget.payday)) : "Add an amount") + "</span></div></div>";
+  }
+
+  function renderRunway(budget) {
+    var items = [
+      { label: "Bills before payday", value: budget.bills, color: "orange" },
+      { label: "Savings and envelopes", value: budget.envelopes + budget.goals, color: "purple" },
+      { label: "Debt payments", value: budget.debt, color: "rose" },
+      { label: "Safety buffer", value: budget.buffer, color: "blue" }
+    ];
+    return "<div class='allocation-stack'>" + items.map(function (item) {
+      return "<div class='allocation-line'><span>" + esc(item.label) + "</span><strong>" + formatMoney(item.value) + "</strong></div>";
+    }).join("") + "<div class='allocation-line total'><span>Safe until payday</span><strong>" + formatMoney(budget.safeUntil) + "</strong></div></div>";
+  }
+
+  function renderMilestone() {
+    var paid = state.bills.filter(function (bill) { return bill.paid; }).length;
+    var goal = state.goals.slice().sort(function (a, b) { return (b.saved / Math.max(1, b.target)) - (a.saved / Math.max(1, a.target)); })[0];
+    if (goal) {
+      var progress = Math.round(clamp(goal.saved / Math.max(1, goal.target) * 100, 0, 100));
+      return "<div class='milestone'><div class='milestone-icon'>✦</div><div><strong>" + (progress >= 100 ? "A goal is complete" : progress + "% toward " + esc(goal.name)) +
+        "</strong><span>" + formatMoney(goal.saved) + " saved so far. Small steps count." + (paid ? " You have also cleared " + paid + " bill" + (paid === 1 ? "." : "s.") : "") + "</span></div></div>";
+    }
+    return "<div class='milestone'><div class='milestone-icon'>✦</div><div><strong>Start with one honest number</strong><span>Every useful plan begins with a small check-in, not perfection.</span></div></div>";
+  }
+
+  function renderMiniCategoryBars() {
+    var rows = state.envelopes.slice(0, 4);
+    if (!rows.length) return emptyState("Add an envelope to see your spending shape.", "Add envelope", "add-envelope");
+    var colors = ["", "amber", "purple", "blue"];
+    return "<div class='category-bars'>" + rows.map(function (item, index) {
+      var spent = categorySpent(item.name, todayISO());
+      var percent = clamp(spent / Math.max(1, item.limit) * 100, 0, 100);
+      return "<div class='category-bar-row'><div class='category-bar-label'><span>" + esc(item.icon || categoryIcon(item.name)) + " " + esc(item.name) +
+        "</span><strong>" + formatMoney(spent) + " / " + formatMoney(item.limit) + "</strong></div><div class='category-bar-track'><div class='category-bar-fill " +
+        colors[index % colors.length] + "' style='width:" + percent + "%'></div></div></div>";
+      }).join("") + "</div>";
+  }
+
+  function advancePayday(date, frequency) {
+    if (frequency === "weekly") return addDays(date, 7);
+    if (frequency === "biweekly") return addDays(date, 14);
+    if (frequency === "semimonthly") {
+      var semi = parseDate(date);
+      if (semi.getDate() < 15) semi.setDate(15);
+      else semi = new Date(semi.getFullYear(), semi.getMonth() + 1, 1);
+      return semi;
+    }
+    if (frequency === "monthly") return addMonths(date, 1);
+    return addDays(date, 14);
+  }
+
+  function upcomingPaychecks(limit) {
+    var today = todayISO();
+    var source = state.paychecks.filter(function (paycheck) {
+      return paycheckDate(paycheck) >= today && paycheck.status !== "cancelled";
+    }).sort(function (a, b) { return paycheckDate(a).localeCompare(paycheckDate(b)); });
+    var result = source.slice(0, limit || 6);
+    var frequency = state.profile.payFrequency || "biweekly";
+    var base = result.length ? result[result.length - 1] : {
+      date: state.profile.nextPayday || today,
+      amount: 0,
+      expected: 0,
+      name: "Next paycheck",
+      source: "Income",
+      frequency: frequency
+    };
+    while (result.length < (limit || 6) && frequency !== "irregular") {
+      var nextDate = isoDate(advancePayday(base.date, frequency));
+      var already = result.some(function (item) { return item.date === nextDate; });
+      if (!already) {
+        base = Object.assign({}, base, {
+          id: uid("generated-pay"),
+          date: nextDate,
+          frequency: frequency,
+          status: "upcoming",
+          actual: 0,
+          earlyPayDays: base.earlyPayDays || 0
+        });
+        result.push(base);
+      } else {
+        base.date = nextDate;
+      }
+    }
+    return result.slice(0, limit || 6);
+  }
+
+  function threePaycheckMonth() {
+    var paychecks = upcomingPaychecks(8);
+    var counts = {};
+    paychecks.forEach(function (paycheck) {
+      var key = paycheckDate(paycheck).slice(0, 7);
+      counts[key] = (counts[key] || 0) + 1;
+    });
+    return Object.keys(counts).find(function (key) { return counts[key] >= 3; }) || "";
+  }
+
+  function paycheckAllocation(paycheck) {
+    var arrival = paycheckDate(paycheck);
+    var candidates = upcomingPaychecks(8).filter(function (item) { return paycheckDate(item) > arrival; });
+    var nextDate = candidates.length ? paycheckDate(candidates[0]) : isoDate(advancePayday(paycheck.date || arrival, paycheck.frequency || state.profile.payFrequency));
+    var bills = sum(state.bills.filter(function (bill) { return !bill.paid && bill.dueDate > arrival && bill.dueDate <= nextDate; }), function (bill) { return bill.amount; });
+    var goals = sum(state.goals, function (goal) { return goal.perPaycheck; });
+    var envelopes = sum(state.envelopes, function (envelope) { return envelope.reserved; });
+    var debt = sum(state.debts.filter(function (item) { return item.dueDate && item.dueDate > arrival && item.dueDate <= nextDate; }), function (item) { return num(item.minimum) + num(item.extra); });
+    var buffer = num(state.profile.safetyBuffer);
+    var afterEssentials = valueOfPaycheck(paycheck) - bills - debt;
+    var remaining = afterEssentials - goals - envelopes - buffer;
+    var flexible = num(paycheck.flexibleAmount) > 0 ? Math.min(num(paycheck.flexibleAmount), Math.max(0, remaining)) : Math.max(0, remaining);
+    var unassigned = Math.max(0, remaining - flexible);
+    return { arrival: arrival, nextDate: nextDate, amount: valueOfPaycheck(paycheck), bills: bills, goals: goals, envelopes: envelopes, debt: debt, buffer: buffer, afterEssentials: afterEssentials, flexible: flexible, unassigned: unassigned, safe: remaining };
+  }
+
+  function renderPaychecks() {
+    var budget = calculateBudget();
+    var paychecks = upcomingPaychecks(6);
+    var triple = threePaycheckMonth();
+    var paycheckPlan = paycheckAllocation(budget.payday);
+    var html = viewIntro(
+      "Give every paycheck a clear purpose",
+      "Plan around when money arrives, not only around the first day of the month.",
+      "Add paycheck",
+      "add-paycheck"
+    );
+
+    if (triple) {
+      html += gentleBanner(
+        "A three-paycheck month is coming",
+        "You have an extra paycheck in " + monthLabel(triple + "-01") + ". Give it a job before it arrives.",
+        "Add a goal",
+        "add-goal"
+      );
+    }
+
+    html += "<div class='paycheck-layout'><section class='paycheck-hero'><div class='kicker'>Your next payday</div><h2>" +
+      (budget.payday.amount ? formatMoney(valueOfPaycheck(budget.payday)) : "Add your next amount") +
+      " is waiting for a plan.</h2><p class='subtle-note'>You have " + budget.days + " days until " + formatDate(budget.paydayDate) +
+      ". Here is what the next paycheck needs to carry first.</p><div class='allocation-stack'>" +
+      "<div class='allocation-line'><span>Current spendable balance</span><strong>" + formatMoney(budget.balance) + "</strong></div>" +
+      "<div class='allocation-line'><span>Next paycheck</span><strong>+" + formatMoney(valueOfPaycheck(budget.payday)) + "</strong></div>" +
+      "<div class='allocation-line'><span>Bills before payday</span><strong>-" + formatMoney(budget.bills) + "</strong></div>" +
+      "<div class='allocation-line'><span>Savings and envelopes</span><strong>-" + formatMoney(budget.envelopes + budget.goals) + "</strong></div>" +
+      "<div class='allocation-line'><span>Debt payments</span><strong>-" + formatMoney(budget.debt) + "</strong></div>" +
+      "<div class='allocation-line'><span>Safety buffer</span><strong>-" + formatMoney(budget.buffer) + "</strong></div>" +
+      "<div class='allocation-line total'><span>Safe spending amount</span><strong>" + formatMoney(budget.safeUntil) + "</strong></div></div>" +
+      "<div class='view-actions' style='margin-top:21px'><button class='secondary-button' data-action='formula'>ⓘ See the math</button><button class='primary-button' data-action='add-paycheck'>＋ Add income</button></div></section>" +
+      "<section class='paycheck-next'><div class='card-title-row'><h3>Upcoming paydays</h3><span class='badge green'>" + frequencyLabel(state.profile.payFrequency) + "</span></div>" +
+      "<div class='paycheck-mini-list'>" + (paychecks.length ? paychecks.slice(0, 4).map(function (paycheck) {
+        return "<div class='paycheck-mini'><div><strong>" + esc(paycheck.name || "Paycheck") + "</strong><span>" + formatDate(paycheckDate(paycheck)) + (num(paycheck.earlyPayDays) ? " · " + num(paycheck.earlyPayDays) + "d early" : "") + " · " + esc(paycheck.source || "Income") + "</span></div><span class='paycheck-mini-amount'>" +
+          formatMoney(valueOfPaycheck(paycheck)) + "</span></div>";
+      }).join("") : emptyState("Add an income source to plan your first payday.", "Add paycheck", "add-paycheck")) + "</div></section></div>";
+
+    html += "<section class='content-card' style='margin-top:18px'><div class='card-title-row'><div><h3>This paycheck, with jobs</h3><p class='subtle-note' style='margin:5px 0 0'>From arrival through the next payday, every planned amount stays visible.</p></div><span class='badge purple'>" + formatDate(paycheckPlan.arrival) + " → " + formatDate(paycheckPlan.nextDate) + "</span></div><div class='allocation-stack'><div class='allocation-line'><span>This paycheck</span><strong>" + formatMoney(paycheckPlan.amount) + "</strong></div><div class='allocation-line'><span>Bills before next paycheck</span><strong>-" + formatMoney(paycheckPlan.bills) + "</strong></div><div class='allocation-line'><span>Savings contributions</span><strong>-" + formatMoney(paycheckPlan.goals) + "</strong></div><div class='allocation-line'><span>Envelope reserve</span><strong>-" + formatMoney(paycheckPlan.envelopes) + "</strong></div><div class='allocation-line'><span>Debt payments</span><strong>-" + formatMoney(paycheckPlan.debt) + "</strong></div><div class='allocation-line'><span>Buffer</span><strong>-" + formatMoney(paycheckPlan.buffer) + "</strong></div><div class='allocation-line'><span>Flexible spending</span><strong>" + formatMoney(paycheckPlan.flexible) + "</strong></div><div class='allocation-line'><span>Unassigned money</span><strong>" + formatMoney(paycheckPlan.unassigned) + "</strong></div><div class='allocation-line total'><span>Safe spending amount</span><strong>" + formatMoney(paycheckPlan.safe) + "</strong></div></div><p class='subtle-note' style='margin:15px 0 0'>Set a flexible spending target on a paycheck to split remaining money into “flexible” and “unassigned.” With no target, the remaining amount is treated as flexible by default.</p></section>";
+
+    html += "<section class='content-card' style='margin-top:18px'><div class='card-title-row'><div><h3>Payday map</h3><p class='subtle-note' style='margin:5px 0 0'>Expected money, actual money, and the jobs waiting for it.</p></div><button class='text-button' data-action='add-paycheck'>＋ Add another</button></div>" +
+      "<div class='table-wrap'><table class='data-table'><thead><tr><th>Payday</th><th>Source</th><th>Expected</th><th>Actual</th><th>Status</th><th></th></tr></thead><tbody>" +
+      (paychecks.length ? paychecks.map(function (paycheck) {
+        var actual = num(paycheck.actual);
+        var received = actual > 0 || paycheck.status === "received";
+        return "<tr><td><strong>" + formatDate(paycheckDate(paycheck), { month: "short", day: "numeric", year: "numeric" }) + "</strong><br><span class='subtle-note'>" + esc(frequencyLabel(paycheck.frequency || state.profile.payFrequency)) + (num(paycheck.earlyPayDays) ? " · " + num(paycheck.earlyPayDays) + "d early" : "") + "</span></td>" +
+          "<td>" + esc(paycheck.name || "Paycheck") + "<br><span class='subtle-note'>" + esc(paycheck.source || "Income") + "</span></td>" +
+          "<td>" + formatMoney(paycheck.expected || paycheck.amount) + "</td><td>" + (actual ? formatMoney(actual) : "<span class='subtle-note'>Not received</span>") + "</td>" +
+          "<td><span class='badge " + (received ? "green" : "blue") + "'>" + (received ? "Received" : "Expected") + "</span></td>" +
+          "<td class='text-right'><button class='mini-action' data-action='edit-paycheck' data-id='" + paycheck.id + "' title='Edit'>✎</button></td></tr>";
+      }).join("") : "<tr><td colspan='6'>" + emptyState("No paychecks yet. Add your first income source.") + "</td></tr>") +
+      "</tbody></table></div></section>";
+
+    html += "<div class='two-column'><section class='content-card'><div class='card-title-row'><h3>Payday checklist</h3><span class='badge purple'>repeatable</span></div><div class='setup-steps'>" +
+      "<div class='setup-step'><div class='setup-step-number'>1</div><div><strong>Log what actually arrived</strong><span>Expected and actual amounts can be different. The plan can change gently.</span></div></div>" +
+      "<div class='setup-step'><div class='setup-step-number'>2</div><div><strong>Cover must-pays first</strong><span>Reserve bills due before the next payday before choosing flexible spending.</span></div></div>" +
+      "<div class='setup-step'><div class='setup-step-number'>3</div><div><strong>Give the rest a job</strong><span>Add savings, debt, envelopes, and a little breathing room.</span></div></div></div></section>" +
+      "<section class='content-card'><div class='card-title-row'><h3>Paycheck settings</h3><button class='text-button' data-view='settings'>Open settings</button></div>" +
+      "<div class='setting-row'><div class='setting-copy'><strong>Pay schedule</strong><span>" + esc(frequencyLabel(state.profile.payFrequency)) + "</span></div><span class='badge gray'>editable</span></div>" +
+      "<div class='setting-row'><div class='setting-copy'><strong>Next payday</strong><span>" + formatDate(budget.paydayDate, { month: "long", day: "numeric", year: "numeric" }) + "</span></div><span class='badge green'>" + budget.days + " days</span></div>" +
+      "<div class='setting-row'><div class='setting-copy'><strong>Unassigned money</strong><span>Keep this visible so every dollar has a gentle plan.</span></div><strong>" + formatMoney(Math.max(0, budget.safeUntil)) + "</strong></div></section></div>";
+    return html;
+  }
+
+  function billStatus(bill) {
+    if (bill.paid) return { label: "Paid", className: "green" };
+    var days = dateDiff(todayISO(), bill.dueDate);
+    if (days < 0) return { label: "Needs review", className: "rose" };
+    if (days <= 7) return { label: days === 0 ? "Due today" : "Due soon", className: "amber" };
+    return { label: "Scheduled", className: "gray" };
+  }
+
+  function renderBills() {
+    var bills = state.bills.slice().sort(function (a, b) { return a.dueDate.localeCompare(b.dueDate); });
+    var dueSoon = upcomingBills(7);
+    var monthTotal = sum(state.bills.filter(function (bill) { return bill.frequency === "monthly"; }), function (bill) { return bill.amount; });
+    var html = viewIntro(
+      "Keep bills visible before they become urgent",
+      "Recurring, annual, one-time, and irregular bills can all live in one calm list.",
+      "Add bill",
+      "add-bill"
+    );
+    html += "<div class='metric-grid'>" +
+      miniMetric("Due in 7 days", formatMoney(sum(dueSoon, function (item) { return item.amount; })), "✓", "orange", dueSoon.length + " bill" + (dueSoon.length === 1 ? "" : "s")) +
+      miniMetric("Monthly recurring", formatMoney(monthTotal), "↻", "blue", "before flexible spending") +
+      miniMetric("Needs review", String(state.bills.filter(function (bill) { return !bill.paid && dateDiff(todayISO(), bill.dueDate) < 0; }).length), "!", "rose", "overdue or missed") +
+      miniMetric("Paid this month", String(state.bills.filter(function (bill) { return bill.paid && bill.dueDate.slice(0, 7) === todayISO().slice(0, 7); }).length), "✦", "green", "small wins count") +
+      "</div>";
+
+    html += "<section class='content-card' style='margin-top:18px'><div class='card-title-row'><div><h3>Must-pays</h3><p class='subtle-note' style='margin:5px 0 0'>Mark a bill paid once and it leaves today’s attention list.</p></div><button class='text-button' data-action='add-bill'>＋ Add another</button></div>" +
+      "<div class='table-wrap'><table class='data-table'><thead><tr><th>Bill</th><th>Due</th><th>Frequency</th><th>Amount</th><th>Account</th><th>Status</th><th></th></tr></thead><tbody>" +
+      (bills.length ? bills.map(function (bill) {
+        var status = billStatus(bill);
+        return "<tr><td><strong>" + esc(bill.name) + "</strong><br><span class='subtle-note'>" + (bill.autopay ? "Autopay" : "Manual payment") + (bill.setAside ? " · set-aside enabled" : "") + "</span></td>" +
+          "<td>" + formatDate(bill.dueDate, { month: "short", day: "numeric", year: "numeric" }) + "</td><td>" + esc(frequencyLabel(bill.frequency)) + "</td><td><strong>" + formatMoney(bill.amount) + "</strong></td>" +
+          "<td>" + esc(accountName(bill.accountId)) + "</td><td><span class='badge " + status.className + "'>" + status.label + "</span></td><td class='text-right'>" +
+          "<div class='list-actions'><button class='mini-action' data-action='" + (bill.paid ? "unpay-bill" : "pay-bill") + "' data-id='" + bill.id + "' title='" + (bill.paid ? "Mark unpaid" : "Mark paid") + "'>" + (bill.paid ? "↶" : "✓") + "</button>" +
+          "<button class='mini-action' data-action='edit-bill' data-id='" + bill.id + "' title='Edit'>✎</button><button class='mini-action' data-action='delete-bill' data-id='" + bill.id + "' title='Delete'>×</button></div></td></tr>";
+      }).join("") : "<tr><td colspan='7'>" + emptyState("Your bill list is empty. Add the next bill you expect.") + "</td></tr>") +
+      "</tbody></table></div></section>";
+
+    html += "<div class='two-column'><section class='content-card'><div class='card-title-row'><h3>Bill rhythm</h3><span class='badge blue'>flexible</span></div><p class='subtle-note'>Choose the frequency that matches real life. A quarterly bill should not look like a monthly surprise.</p><div class='category-bars' style='margin-top:17px'>" +
+      ["monthly", "weekly", "biweekly", "quarterly", "annual", "once"].map(function (frequency) {
+        var count = state.bills.filter(function (bill) { return bill.frequency === frequency; }).length;
+        return "<div class='category-bar-row'><div class='category-bar-label'><span>" + esc(frequencyLabel(frequency)) + "</span><strong>" + count + "</strong></div><div class='category-bar-track'><div class='category-bar-fill blue' style='width:" + clamp(count / Math.max(1, bills.length) * 100, 0, 100) + "%'></div></div></div>";
+      }).join("") + "</div></section>" +
+      "<section class='content-card'><div class='card-title-row'><h3>Helpful reminder</h3><span class='badge amber'>gentle</span></div><div class='milestone'><div class='milestone-icon' style='background:var(--amber)'>✓</div><div><strong>Make annual bills boring</strong><span>Turn on a monthly set-aside for insurance, renewals, gifts, and other bills that arrive in one large lump.</span></div></div></section></div>";
+    return html;
+  }
+
+  function renderSpend() {
+    var expenses = state.expenses.slice().sort(function (a, b) {
+      return b.date.localeCompare(a.date);
+    });
+    var monthTotal = sum(monthExpenses(todayISO()), function (item) { return item.amount; });
+    var html = viewIntro(
+      "Log spending without making it a project",
+      "Add the amount first. Categories, notes, and recurring details can come when your brain has room.",
+      "Add expense",
+      "add-expense"
+    );
+    html += "<div class='metric-grid'>" +
+      miniMetric("This month", formatMoney(monthTotal), "↘", "rose", monthExpenses(todayISO()).length + " purchase" + (monthExpenses(todayISO()).length === 1 ? "" : "s")) +
+      miniMetric("Brain dump", String(state.brainDump.filter(function (item) { return !item.done; }).length), "✎", "purple", "items to sort later") +
+      miniMetric("Quickest next step", "+" + formatMoney(5), "＋", "green", "one-tap spending") +
+      miniMetric("Impulse pause", String(state.impulses.filter(function (item) { return item.status === "waiting"; }).length), "◌", "orange", "waiting list") +
+      "</div>";
+    html += "<section class='content-card' style='margin-top:18px'><div class='card-title-row'><div><h3>Quick add</h3><p class='subtle-note' style='margin:5px 0 0'>Tap a round number, then add detail only if it helps.</p></div><button class='text-button' data-action='add-expense'>Open full entry</button></div>" +
+      "<div class='quick-add-wrap'>" + [5, 10, 20, 50].map(function (amount) {
+        return "<button class='quick-chip' data-action='quick-expense' data-amount='" + amount + "'>+" + formatMoney(amount) + "</button>";
+      }).join("") + "</div>" +
+      "<form data-form='brain-inline' class='quick-note-form' style='margin-top:18px'><div class='field'><label for='brainQuickNote'>Brain dump an uncategorized purchase or money thought</label><input class='form-control' id='brainQuickNote' name='text' placeholder='e.g. $18 at the pharmacy — category later' required></div><div class='form-actions'><button class='secondary-button' type='submit'>Save for later</button></div></form></section>";
+    html += "<div class='two-column'><section class='content-card'><div class='card-title-row'><div><h3>Spending log</h3><p class='subtle-note' style='margin:5px 0 0'>Edit or remove anything. This is information, not a score.</p></div><span class='badge gray'>" + expenses.length + " total</span></div>" +
+      (expenses.length ? "<div class='transaction-list'>" + expenses.map(function (expense) {
+        return "<div class='list-item'><div class='list-icon'>" + categoryIcon(expense.category) + "</div><div class='list-main'><strong>" + esc(expense.name || expense.category) + "</strong><span>" + esc(expense.category || "Uncategorized") + " · " + formatDate(expense.date) + " · " + esc(accountName(expense.accountId)) + (expense.recurring ? " · recurring" : "") + "</span></div><span class='list-amount expense'>-" + formatMoney(expense.amount) + "</span><div class='list-actions'><button class='mini-action' data-action='edit-expense' data-id='" + expense.id + "' title='Edit'>✎</button><button class='mini-action' data-action='delete-expense' data-id='" + expense.id + "' title='Delete'>×</button></div></div>";
+      }).join("") + "</div>" : emptyState("No spending logged yet. Start with the amount, not the perfect category.", "Add expense", "add-expense")) +
+      "</section><section class='content-card'><div class='card-title-row'><div><h3>Where money is going</h3><p class='subtle-note' style='margin:5px 0 0'>Based on this month so far.</p></div><button class='text-button' data-view='envelopes'>Plan categories</button></div>" + renderMiniCategoryBars() + "<div class='milestone' style='margin-top:22px'><div class='milestone-icon'>✎</div><div><strong>Too much to decide right now?</strong><span>Put it in Brain dump. Organizing later still counts as progress.</span></div></div></section></div>";
+    return html;
+  }
+
+  function renderBrain() {
+    var openItems = state.brainDump.filter(function (item) { return !item.done; }).sort(function (a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); });
+    var doneItems = state.brainDump.filter(function (item) { return item.done; }).sort(function (a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); });
+    var impulses = state.impulses.slice().sort(function (a, b) { return String(b.createdAt).localeCompare(String(a.createdAt)); });
+    var html = viewIntro(
+      "A safe place for unfinished money thoughts",
+      "Capture first. Sort when you have the attention for it. A messy note is better than a hidden worry.",
+      "Add thought",
+      "add-brain"
+    );
+    html += "<div class='two-column'><section class='content-card'><div class='card-title-row'><div><h3>Brain dump</h3><p class='subtle-note' style='margin:5px 0 0'>Uncategorized purchases, reminders, questions, and ideas.</p></div><span class='badge purple'>" + openItems.length + " open</span></div>" +
+      "<form data-form='brain' class='stack-gap'><div class='field'><label for='brainText'>What is on your mind?</label><textarea class='form-control' id='brainText' name='text' placeholder='Write it exactly as it comes...' required></textarea></div><div class='form-actions'><button class='primary-button' type='submit'>Save thought</button></div></form>" +
+      "<div class='section-heading'><div><h3>Open items</h3><p>Come back when you are ready.</p></div></div>" +
+      (openItems.length ? "<div class='entity-list'>" + openItems.map(function (item) {
+        return "<div class='list-item'><div class='list-icon'>✎</div><div class='list-main'><strong>" + esc(item.text) + "</strong><span>Added " + formatDate(item.createdAt) + "</span></div><div class='list-actions'><button class='mini-action' data-action='resolve-brain' data-id='" + item.id + "' title='Turn into expense'>↗</button><button class='mini-action' data-action='done-brain' data-id='" + item.id + "' title='Mark done'>✓</button><button class='mini-action' data-action='delete-brain' data-id='" + item.id + "' title='Delete'>×</button></div></div>";
+      }).join("") + "</div>" : emptyState("Nothing waiting here. That is a lovely kind of empty.")) +
+      (doneItems.length ? "<div class='section-heading'><div><h3>Recently closed</h3><p>Finished is enough; no streak required.</p></div></div><div class='entity-list'>" + doneItems.slice(0, 4).map(function (item) {
+        return "<div class='list-item'><div class='list-icon'>✓</div><div class='list-main'><strong>" + esc(item.text) + "</strong><span>Done · " + formatDate(item.createdAt) + "</span></div><button class='mini-action' data-action='delete-brain' data-id='" + item.id + "' title='Delete'>×</button></div>";
+      }).join("") + "</div>" : "") +
+      "</section><section class='content-card'><div class='card-title-row'><div><h3>Impulse pause</h3><p class='subtle-note' style='margin:5px 0 0'>Give a want 24 or 48 hours before deciding.</p></div><button class='text-button' data-action='add-impulse'>＋ Add want</button></div>" +
+      (impulses.length ? "<div class='entity-list'>" + impulses.map(function (item) {
+        var elapsed = dateDiff(item.createdAt, todayISO()) * 24;
+        var ready = item.status !== "waiting" || elapsed >= num(item.waitHours || 24);
+        var statusLabel = item.status === "waiting" ? (ready ? "Ready to decide" : "Waiting " + Math.max(1, num(item.waitHours || 24) - elapsed) + "h more") : typeLabel(item.status);
+        var statusClass = item.status === "waiting" && !ready ? "amber" : (item.status === "purchased" ? "blue" : "green");
+        return "<div class='list-item'><div class='list-icon'>◌</div><div class='list-main'><strong>" + esc(item.item) + " · " + formatMoney(item.amount) + "</strong><span>" + statusLabel + " · " + (item.waitHours || 24) + "h pause</span></div><div class='list-actions'><button class='mini-action' data-action='impulse-buy' data-id='" + item.id + "' title='Mark bought'>✓</button><button class='mini-action' data-action='impulse-dismiss' data-id='" + item.id + "' title='Let go'>×</button></div><span class='badge " + statusClass + "'>" + statusLabel + "</span></div>";
+      }).join("") + "</div>" : emptyState("No impulse purchases waiting. Add one when you want a pause, not a lecture.", "Add a want", "add-impulse")) +
+      "<div class='milestone' style='margin-top:20px'><div class='milestone-icon'>◌</div><div><strong>There is no wrong time to pause</strong><span>A pause is information. You can still buy the thing after the wait.</span></div></div></section></div>";
+    return html;
+  }
+
+  function renderEnvelopes() {
+    var envelopes = state.envelopes.slice();
+    var planned = sum(envelopes, function (item) { return item.limit; });
+    var reserved = sum(envelopes, function (item) { return item.reserved; });
+    var spent = sum(envelopes, function (item) { return categorySpent(item.name, todayISO()); });
+    var html = viewIntro(
+      "Give flexible money a home",
+      "Categories are guardrails, not rules. Use only the level of detail that makes your next choice easier.",
+      "Add envelope",
+      "add-envelope"
+    );
+    html += "<div class='metric-grid'>" + miniMetric("Planned this month", formatMoney(planned), "▱", "blue", "all envelopes") + miniMetric("Reserved", formatMoney(reserved), "◎", "purple", "already assigned") + miniMetric("Spent so far", formatMoney(spent), "↘", "rose", "this month") + miniMetric("Remaining", formatMoney(planned - spent), "✦", "green", "before limits") + "</div>";
+    html += "<section class='content-card' style='margin-top:18px'><div class='card-title-row'><div><h3>Your envelopes</h3><p class='subtle-note' style='margin:5px 0 0'>A quick visual check is enough. Open a row only when you need details.</p></div><button class='text-button' data-action='add-envelope'>＋ Add custom category</button></div>" +
+      (envelopes.length ? "<div class='table-wrap'><table class='data-table'><thead><tr><th>Category</th><th>Monthly plan</th><th>Spent</th><th>Remaining</th><th>Progress</th><th>Reserved</th><th></th></tr></thead><tbody>" + envelopes.map(function (item) {
+        var itemSpent = categorySpent(item.name, todayISO());
+        var remaining = num(item.limit) - itemSpent;
+        var percent = clamp(itemSpent / Math.max(1, num(item.limit)) * 100, 0, 100);
+        return "<tr><td><strong>" + esc(item.icon || categoryIcon(item.name)) + " " + esc(item.name) + "</strong></td><td>" + formatMoney(item.limit) + "</td><td>" + formatMoney(itemSpent) + "</td><td><strong>" + formatMoney(remaining) + "</strong></td><td><div class='progress-row'><div class='progress-track'><div class='progress-fill " + (percent > 90 ? "amber" : "") + "' style='width:" + percent + "%'></div></div><span>" + Math.round(percent) + "%</span></div></td><td>" + formatMoney(item.reserved) + "</td><td><div class='list-actions'><button class='mini-action' data-action='edit-envelope' data-id='" + item.id + "' title='Edit'>✎</button><button class='mini-action' data-action='delete-envelope' data-id='" + item.id + "' title='Delete'>×</button></div></td></tr>";
+      }).join("") + "</tbody></table></div>" : emptyState("No envelopes yet. Start with one category that would make this week easier.", "Add envelope", "add-envelope")) +
+      "</section><div class='two-column'><section class='content-card'><div class='card-title-row'><h3>Suggested categories</h3><span class='badge gray'>optional</span></div><p class='subtle-note'>Groceries, fuel, entertainment, subscriptions, personal spending, household, clothing, and medical are ready to use. You can also name your own.</p><div class='quick-add-wrap' style='margin-top:17px'>" + ["Groceries", "Fuel", "Entertainment", "Subscriptions", "Medical"].map(function (name) { return "<button class='quick-chip' data-action='add-envelope-name' data-name='" + esc(name) + "'>" + categoryIcon(name) + " " + esc(name) + "</button>"; }).join("") + "</div></section><section class='content-card'><div class='card-title-row'><h3>Gentle reset</h3><span class='badge green'>no shame</span></div><div class='milestone'><div class='milestone-icon'>✦</div><div><strong>Over a category?</strong><span>Adjust the plan, move money, or simply notice it. Your budget is allowed to learn.</span></div></div></section></div>";
+    return html;
+  }
+
+  function renderGoals() {
+    var goals = state.goals.slice();
+    var target = sum(goals, function (goal) { return goal.target; });
+    var saved = totalSaved();
+    var html = viewIntro(
+      "Make future-you easier to support",
+      "Goals turn vague hopes into small contributions you can see and adjust.",
+      "Add savings goal",
+      "add-goal"
+    );
+    html += "<div class='metric-grid'>" + miniMetric("Saved so far", formatMoney(saved), "◎", "green", goals.length + " goal" + (goals.length === 1 ? "" : "s")) + miniMetric("Target total", formatMoney(target), "◇", "purple", "across goals") + miniMetric("Still needed", formatMoney(Math.max(0, target - saved)), "→", "blue", "one step at a time") + miniMetric("Per paycheck", formatMoney(sum(goals, function (goal) { return goal.perPaycheck; })), "↗", "orange", "planned contributions") + "</div>";
+    html += "<section class='content-card' style='margin-top:18px'><div class='card-title-row'><div><h3>Progress you can feel</h3><p class='subtle-note' style='margin:5px 0 0'>Add a contribution whenever money moves. No streaks, just evidence.</p></div><button class='text-button' data-action='add-goal'>＋ Add goal</button></div>" +
+      (goals.length ? "<div class='entity-list'>" + goals.map(function (goal) {
+        var percent = Math.round(clamp(num(goal.saved) / Math.max(1, num(goal.target)) * 100, 0, 100));
+        return "<div class='list-item goal-row'><div class='list-icon'>" + esc(goal.icon || "✦") + "</div><div class='list-main'><strong>" + esc(goal.name) + "</strong><span>" + formatMoney(goal.saved) + " saved of " + formatMoney(goal.target) + " · " + formatMoney(Math.max(0, num(goal.target) - num(goal.saved))) + " remaining · target " + formatDate(goal.targetDate) + " · " + formatMoney(goal.perPaycheck) + " / paycheck</span><div class='progress-row' style='margin-top:8px'><div class='progress-track'><div class='progress-fill purple' style='width:" + percent + "%'></div></div><span>" + percent + "%</span></div></div><div class='list-actions'><button class='mini-action' data-action='contribute-goal' data-id='" + goal.id + "' title='Add contribution'>＋</button><button class='mini-action' data-action='edit-goal' data-id='" + goal.id + "' title='Edit'>✎</button><button class='mini-action' data-action='delete-goal' data-id='" + goal.id + "' title='Delete'>×</button></div></div>";
+      }).join("") + "</div>" : emptyState("No savings goals yet. One small goal is enough to begin.", "Add savings goal", "add-goal")) +
+      "</section><div class='two-column'><section class='content-card'><div class='card-title-row'><h3>How contributions work</h3><span class='badge purple'>visible</span></div><div class='setup-steps'><div class='setup-step'><div class='setup-step-number'>1</div><div><strong>Choose a target date</strong><span>The date helps estimate a contribution; it does not create pressure.</span></div></div><div class='setup-step'><div class='setup-step-number'>2</div><div><strong>Assign a per-paycheck amount</strong><span>Keep it small enough that the rest of the plan can breathe.</span></div></div><div class='setup-step'><div class='setup-step-number'>3</div><div><strong>Update when money moves</strong><span>Progress can be edited any time, including when plans change.</span></div></div></div></section><section class='content-card'><div class='card-title-row'><h3>Small milestone</h3><span class='badge green'>celebrate</span></div>" + renderMilestone() + "</section></div>";
+    return html;
+  }
+
+  function debtPayoffDate(debt) {
+    var balance = num(debt.balance);
+    var payment = num(debt.minimum) + num(debt.extra);
+    if (balance <= 0) return "Paid off";
+    if (payment <= 0) return "Add a payment";
+    var monthlyRate = num(debt.apr) / 100 / 12;
+    var months;
+    if (monthlyRate > 0 && payment > balance * monthlyRate) {
+      months = Math.ceil(-Math.log(1 - (balance * monthlyRate / payment)) / Math.log(1 + monthlyRate));
+    } else {
+      months = Math.ceil(balance / payment);
+    }
+    if (!Number.isFinite(months) || months > 600) return "More than 50 years";
+    return formatDate(isoDate(addMonths(todayISO(), months)), { month: "short", year: "numeric" });
+  }
+
+  function renderDebt() {
+    var debts = state.debts.slice();
+    var ordered = debts.slice().sort(function (a, b) {
+      if (state.profile.debtMethod === "avalanche") return num(b.apr) - num(a.apr);
+      return num(a.balance) - num(b.balance);
+    });
+    var html = viewIntro(
+      "Make debt smaller and more understandable",
+      "Choose a payoff method, see the next payment, and keep the progress visible without turning it into a judgment.",
+      "Add debt",
+      "add-debt"
+    );
+    html += "<div class='metric-grid'>" + miniMetric("Total debt", formatMoney(totalDebt()), "↘", "rose", debts.length + " account" + (debts.length === 1 ? "" : "s")) + miniMetric("Minimums", formatMoney(sum(debts, function (item) { return item.minimum; })), "✓", "orange", "per payment cycle") + miniMetric("Extra planned", formatMoney(sum(debts, function (item) { return item.extra; })), "＋", "purple", "accelerator") + miniMetric("Progress", Math.round(clamp(sum(debts, function (item) { return num(item.originalBalance) - num(item.balance); }) / Math.max(1, sum(debts, function (item) { return item.originalBalance; })) * 100, 0, 100)) + "%", "✦", "green", "from starting balances") + "</div>";
+    html += "<section class='content-card' style='margin-top:18px'><div class='card-title-row'><div><h3>Payoff order</h3><p class='subtle-note' style='margin:5px 0 0'>The order changes the focus, not your worth.</p></div><div class='pill-tabs'><button class='pill-tab " + (state.profile.debtMethod === "snowball" ? "active" : "") + "' data-action='debt-method' data-method='snowball'>Snowball</button><button class='pill-tab " + (state.profile.debtMethod === "avalanche" ? "active" : "") + "' data-action='debt-method' data-method='avalanche'>Avalanche</button></div></div>" +
+      (ordered.length ? "<div class='table-wrap'><table class='data-table'><thead><tr><th>Order</th><th>Creditor</th><th>Balance</th><th>APR</th><th>Minimum</th><th>Due</th><th>Estimate</th><th></th></tr></thead><tbody>" + ordered.map(function (debt, index) {
+        var progress = clamp((num(debt.originalBalance) - num(debt.balance)) / Math.max(1, num(debt.originalBalance)) * 100, 0, 100);
+        return "<tr><td><span class='badge " + (index === 0 ? "green" : "gray") + "'>#" + (index + 1) + "</span></td><td><strong>" + esc(debt.creditor) + "</strong><br><div class='progress-row' style='margin-top:7px'><div class='progress-track'><div class='progress-fill rose' style='width:" + progress + "%'></div></div><span>" + Math.round(progress) + "% down</span></div></td><td><strong>" + formatMoney(debt.balance) + "</strong></td><td>" + num(debt.apr).toFixed(2) + "%</td><td>" + formatMoney(debt.minimum) + (num(debt.extra) ? "<br><span class='subtle-note'>+" + formatMoney(debt.extra) + " extra</span>" : "") + "</td><td>" + formatDate(debt.dueDate) + "</td><td><span class='badge blue'>" + debtPayoffDate(debt) + "</span></td><td><div class='list-actions'><button class='mini-action' data-action='add-debt-payment' data-id='" + debt.id + "' title='Log payment'>＋</button><button class='mini-action' data-action='edit-debt' data-id='" + debt.id + "' title='Edit'>✎</button><button class='mini-action' data-action='delete-debt' data-id='" + debt.id + "' title='Delete'>×</button></div></td></tr>";
+      }).join("") + "</tbody></table></div>" : emptyState("No debts listed. Add one when you are ready to make the picture clearer.", "Add debt", "add-debt")) +
+      "</section><div class='two-column'><section class='content-card'><div class='card-title-row'><h3>What to pay next</h3><span class='badge amber'>suggestion</span></div>" + (ordered.length ? "<div class='milestone'><div class='milestone-icon' style='background:var(--rose)'>↘</div><div><strong>Focus extra money on " + esc(ordered[0].creditor) + "</strong><span>Keep minimums current, then send extra toward the " + (state.profile.debtMethod === "avalanche" ? "highest interest rate" : "smallest balance") + ".</span></div></div>" : emptyState("Your next debt step will appear here.")) + "</section><section class='content-card'><div class='card-title-row'><h3>Important detail</h3><span class='badge gray'>estimate</span></div><p class='subtle-note'>Payoff dates are planning estimates based on the listed balance, interest rate, minimum payment, and extra payment. Actual lender timing can differ.</p></section></div>";
+    return html;
+  }
+
+  function calendarEventsForMonth(date) {
+    var range = monthRange(date);
+    var events = [];
+    state.paychecks.filter(function (item) { var arrival = paycheckDate(item); return arrival >= range.first && arrival <= range.last && item.status !== "cancelled"; }).forEach(function (item) {
+      events.push({ date: paycheckDate(item), type: "income", label: "Pay · " + formatCompactMoney(valueOfPaycheck(item)), sort: 1 });
+    });
+    state.bills.filter(function (item) { return item.dueDate >= range.first && item.dueDate <= range.last; }).forEach(function (item) {
+      events.push({ date: item.dueDate, type: "bill", label: "Bill · " + formatCompactMoney(item.amount), sort: 2 });
+    });
+    state.expenses.filter(function (item) { return item.date >= range.first && item.date <= range.last; }).forEach(function (item) {
+      events.push({ date: item.date, type: "expense", label: (item.name || item.category || "Spend") + " · " + formatCompactMoney(item.amount), sort: 4 });
+    });
+    state.debts.filter(function (item) { return item.dueDate && item.dueDate >= range.first && item.dueDate <= range.last; }).forEach(function (item) {
+      events.push({ date: item.dueDate, type: "bill", label: "Debt · " + formatCompactMoney(num(item.minimum) + num(item.extra)), sort: 3 });
+    });
+    state.goals.forEach(function (goal) {
+      state.paychecks.filter(function (item) { var arrival = paycheckDate(item); return arrival >= range.first && arrival <= range.last && item.status !== "cancelled"; }).forEach(function (item) {
+        if (num(goal.perPaycheck) > 0) events.push({ date: paycheckDate(item), type: "goal", label: "Save " + formatCompactMoney(goal.perPaycheck) + " · " + goal.name, sort: 2 });
+      });
+    });
+    return events.sort(function (a, b) { return a.date.localeCompare(b.date) || a.sort - b.sort; });
+  }
+
+  function renderCalendar() {
+    var monthDate = isoDate(monthCursor);
+    var first = parseDate(monthDate);
+    var range = monthRange(monthDate);
+    var events = calendarEventsForMonth(monthDate);
+    var byDate = {};
+    events.forEach(function (event) {
+      if (!byDate[event.date]) byDate[event.date] = [];
+      byDate[event.date].push(event);
+    });
+    var html = viewIntro(
+      "See the month as one gentle picture",
+      "Paydays, bills, debt payments, and spending share one calendar so nothing has to live in your head alone.",
+      "Add event",
+      "add-expense"
+    );
+    html += "<section class='content-card calendar-card'><div class='calendar-head'><div><button class='text-button' data-action='calendar-today'>Today</button><h2 style='margin-top:8px'>" + esc(monthLabel(monthDate)) + "</h2></div><div class='calendar-actions'><button class='icon-button' data-action='calendar-prev' aria-label='Previous month'>‹</button><button class='icon-button' data-action='calendar-next' aria-label='Next month'>›</button></div></div><div class='calendar-grid'>" +
+      ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map(function (day) { return "<div class='weekday'>" + day + "</div>"; }).join("");
+    var start = new Date(first.getFullYear(), first.getMonth(), 1 - first.getDay());
+    for (var i = 0; i < 42; i += 1) {
+      var day = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+      var key = isoDate(day);
+      var dayEvents = byDate[key] || [];
+      var muted = day.getMonth() !== first.getMonth();
+      var todayClass = key === todayISO() ? " today" : "";
+      html += "<div class='calendar-day " + (muted ? "muted" : "") + todayClass + "'><span class='calendar-day-number'>" + day.getDate() + "</span><div class='calendar-events'>" + dayEvents.slice(0, 4).map(function (event) {
+        return "<div class='calendar-event " + event.type + "' title='" + esc(event.label) + "'>" + esc(event.label) + "</div>";
+      }).join("") + (dayEvents.length > 4 ? "<div class='calendar-event'>+" + (dayEvents.length - 4) + " more</div>" : "") + "</div></div>";
+    }
+    html += "</div></section><div class='two-column'><section class='content-card'><div class='card-title-row'><div><h3>Month at a glance</h3><p class='subtle-note' style='margin:5px 0 0'>Events are grouped by what kind of attention they need.</p></div><span class='badge blue'>" + events.length + " events</span></div><div class='category-bars'><div class='category-bar-row'><div class='category-bar-label'><span>Paydays</span><strong>" + events.filter(function (item) { return item.type === "income"; }).length + "</strong></div><div class='category-bar-track'><div class='category-bar-fill' style='width:" + clamp(events.filter(function (item) { return item.type === "income"; }).length / Math.max(1, events.length) * 100, 0, 100) + "%'></div></div></div><div class='category-bar-row'><div class='category-bar-label'><span>Bills and debt</span><strong>" + events.filter(function (item) { return item.type === "bill"; }).length + "</strong></div><div class='category-bar-track'><div class='category-bar-fill amber' style='width:" + clamp(events.filter(function (item) { return item.type === "bill"; }).length / Math.max(1, events.length) * 100, 0, 100) + "%'></div></div></div><div class='category-bar-row'><div class='category-bar-label'><span>Spending entries</span><strong>" + events.filter(function (item) { return item.type === "expense"; }).length + "</strong></div><div class='category-bar-track'><div class='category-bar-fill rose' style='width:" + clamp(events.filter(function (item) { return item.type === "expense"; }).length / Math.max(1, events.length) * 100, 0, 100) + "%'></div></div></div></div></section><section class='content-card'><div class='card-title-row'><div><h3>Next few events</h3><p class='subtle-note' style='margin:5px 0 0'>A short look-ahead for today.</p></div><button class='text-button' data-view='bills'>Check bills</button></div>" +
+      (events.length ? "<div class='entity-list'>" + events.slice(0, 6).map(function (event) { return "<div class='list-item'><div class='list-icon'>" + (event.type === "income" ? "↗" : event.type === "bill" ? "✓" : "↘") + "</div><div class='list-main'><strong>" + esc(event.label) + "</strong><span>" + formatDate(event.date, { month: "short", day: "numeric" }) + "</span></div><span class='badge " + (event.type === "income" ? "green" : event.type === "bill" ? "amber" : "rose") + "'>" + (event.type === "income" ? "in" : event.type === "bill" ? "due" : "out") + "</span></div>"; }).join("") + "</div>" : emptyState("No events in this month yet.")) + "</section></div>";
+    return html;
+  }
+
+  function debtPaymentsForMonth(date) {
+    var range = monthRange(date);
+    return sum(state.debts, function (debt) {
+      return sum((debt.payments || []).filter(function (payment) { return String(payment.date).slice(0, 7) === range.first.slice(0, 7); }), function (payment) { return payment.amount; });
+    });
+  }
+
+  function renderReview() {
+    var reviewMonth = state.ui.reviewMonth || todayISO().slice(0, 7);
+    var date = reviewMonth + "-01";
+    var income = sum(monthIncome(date), valueOfPaycheck);
+    var spending = sum(monthExpenses(date), function (item) { return item.amount; });
+    var paidBills = sum(monthPaidBills(date), function (item) { return item.amount; });
+    var out = spending + paidBills;
+    var goalPlan = sum(state.goals, function (goal) { return goal.perPaycheck; }) * Math.max(1, monthIncome(date).length);
+    var debtPaid = debtPaymentsForMonth(date);
+    var categories = state.envelopes.slice();
+    var note = state.reviewNotes[reviewMonth] || "";
+    var html = viewIntro(
+      "Notice what worked, then adjust gently",
+      "A monthly review is a short conversation with your plan—not a report card.",
+      "Add expense",
+      "add-expense"
+    );
+    html += "<section class='content-card calendar-card'><div class='calendar-head'><div><button class='text-button' data-action='review-today'>This month</button><h2 style='margin-top:8px'>" + esc(monthLabel(date)) + "</h2></div><div class='calendar-actions'><button class='icon-button' data-action='review-prev' aria-label='Previous month'>‹</button><button class='icon-button' data-action='review-next' aria-label='Next month'>›</button></div></div><div class='review-grid'><div class='review-stat'><span>Income</span><strong>" + formatMoney(income) + "</strong><small>planned and logged</small></div><div class='review-stat'><span>Money out</span><strong>" + formatMoney(out) + "</strong><small>spending + paid bills</small></div><div class='review-stat'><span>Left after outflow</span><strong>" + formatMoney(income - out) + "</strong><small>before goal transfers</small></div><div class='review-stat'><span>Savings plan</span><strong>" + formatMoney(goalPlan) + "</strong><small>per-paycheck goals</small></div><div class='review-stat'><span>Debt reduction</span><strong>" + formatMoney(debtPaid) + "</strong><small>payments logged</small></div><div class='review-stat'><span>Spending entries</span><strong>" + monthExpenses(date).length + "</strong><small>small data points</small></div></div></section>";
+    html += "<div class='two-column'><section class='content-card'><div class='card-title-row'><div><h3>Planned versus actual</h3><p class='subtle-note' style='margin:5px 0 0'>Only categories with a plan appear here.</p></div><button class='text-button' data-view='envelopes'>Adjust plans</button></div>" +
+      (categories.length ? "<div class='table-wrap'><table class='data-table'><thead><tr><th>Category</th><th>Plan</th><th>Actual</th><th>Difference</th><th>Shape</th></tr></thead><tbody>" + categories.map(function (item) {
+        var actual = categorySpent(item.name, date);
+        var difference = num(item.limit) - actual;
+        var percent = clamp(actual / Math.max(1, num(item.limit)) * 100, 0, 100);
+        return "<tr><td><strong>" + esc(item.icon || categoryIcon(item.name)) + " " + esc(item.name) + "</strong></td><td>" + formatMoney(item.limit) + "</td><td>" + formatMoney(actual) + "</td><td><span class='badge " + (difference >= 0 ? "green" : "amber") + "'>" + (difference >= 0 ? "+" : "") + formatMoney(difference) + "</span></td><td><div class='progress-row'><div class='progress-track'><div class='progress-fill " + (difference < 0 ? "amber" : "") + "' style='width:" + percent + "%'></div></div><span>" + Math.round(percent) + "%</span></div></td></tr>";
+      }).join("") + "</tbody></table></div>" : emptyState("Add an envelope to compare a plan with actual spending.", "Add envelope", "add-envelope")) + "</section><section class='content-card'><div class='card-title-row'><div><h3>Write one useful note</h3><p class='subtle-note' style='margin:5px 0 0'>What should next month know?</p></div><span class='badge purple'>private</span></div><form data-form='review-notes'><div class='field'><label for='reviewNote'>One adjustment or one thing that helped</label><textarea class='form-control' id='reviewNote' name='note' placeholder='e.g. Keep more fuel money in the first week...'>" + esc(note) + "</textarea></div><div class='form-actions'><button class='primary-button' type='submit'>Save review note</button></div></form><div class='milestone' style='margin-top:20px'><div class='milestone-icon'>✦</div><div><strong>Progress is not a straight line</strong><span>Use this page to make the next month kinder to the version of you who lives it.</span></div></div></section></div>";
+    return html;
+  }
+
+  function renderAccounts() {
+    var assets = sum(state.accounts.filter(function (item) { return item.type !== "credit"; }), function (item) { return item.balance; });
+    var credit = sum(state.accounts.filter(function (item) { return item.type === "credit"; }), function (item) { return item.balance; });
+    var html = viewIntro(
+      "Keep the actual places for your money visible",
+      "Manual balances are enough. Update them when it helps; nothing connects to your bank unless you choose to do it yourself.",
+      "Add account",
+      "add-account"
+    );
+    html += "<div class='metric-grid'>" + miniMetric("Spendable now", formatMoney(spendableBalance()), "◈", "green", "checking + cash") + miniMetric("Assets listed", formatMoney(assets), "◎", "blue", "non-credit accounts") + miniMetric("Credit balances", formatMoney(credit), "↘", "rose", "listed manually") + miniMetric("Accounts", String(state.accounts.length), "▦", "purple", "all account types") + "</div>";
+    html += "<section class='content-card' style='margin-top:18px'><div class='card-title-row'><div><h3>Account balances</h3><p class='subtle-note' style='margin:5px 0 0'>Use the spendable switch to decide what can safely support everyday spending.</p></div><button class='text-button' data-action='add-account'>＋ Add another</button></div>" +
+      (state.accounts.length ? "<div class='table-wrap'><table class='data-table'><thead><tr><th>Account</th><th>Type</th><th>Balance</th><th>Use for safe-to-spend?</th><th></th></tr></thead><tbody>" + state.accounts.map(function (account) {
+        return "<tr><td><strong>" + esc(account.name) + "</strong></td><td>" + esc(typeLabel(account.type)) + "</td><td><strong>" + formatMoney(account.balance) + "</strong></td><td><span class='badge " + (account.includeInSpendable && account.type !== "credit" ? "green" : "gray") + "'>" + (account.includeInSpendable && account.type !== "credit" ? "Included" : "Kept aside") + "</span></td><td><div class='list-actions'><button class='mini-action' data-action='edit-account' data-id='" + account.id + "' title='Edit'>✎</button><button class='mini-action' data-action='delete-account' data-id='" + account.id + "' title='Delete'>×</button></div></td></tr>";
+      }).join("") + "</tbody></table></div>" : emptyState("Add your checking or cash balance to make the safe-to-spend number personal.", "Add account", "add-account")) +
+      "</section><div class='two-column'><section class='content-card'><div class='card-title-row'><h3>What counts as spendable?</h3><span class='badge green'>your choice</span></div><p class='subtle-note'>CalmPocket adds balances from accounts marked as spendable, except credit cards. Savings can stay visible without being treated as everyday money.</p></section><section class='content-card'><div class='card-title-row'><h3>Update rhythm</h3><span class='badge gray'>manual</span></div><p class='subtle-note'>A once-a-week balance check is plenty for many people. If you miss a few days, use Continue from today and update only what changed.</p></section></div>";
+    return html;
+  }
+
+  function renderSettings() {
+    var profile = state.profile;
+    var html = viewIntro(
+      "Make the planner fit your brain",
+      "Everything is saved locally on this device. Change the level of detail, language of the numbers, or the look of the plan whenever you need.",
+      "Reset planner to empty",
+      "start-fresh"
+    );
+    html += "<div class='settings-grid'><section class='content-card'><div class='card-title-row'><div><h3>Plan settings</h3><p class='subtle-note' style='margin:5px 0 0'>Short forms keep the important details easy to reach.</p></div><span class='badge green'>saved locally</span></div><form data-form='settings-profile'><div class='form-grid'><div class='field'><label for='settingsName'>Plan name</label><input class='form-control' id='settingsName' name='name' value='" + esc(profile.name) + "'></div><div class='field'><label for='settingsAppName'>App name</label><input class='form-control' id='settingsAppName' name='appName' value='" + esc(profile.appName) + "'></div><div class='field'><label for='settingsCurrency'>Currency</label><select class='form-control' id='settingsCurrency' name='currency'>" + selectOptions(Object.keys(currencySymbols).map(function (code) { return { value: code, label: code + " · " + currencySymbols[code] }; }), profile.currency) + "</select></div><div class='field'><label for='settingsPayFrequency'>Pay schedule</label><select class='form-control' id='settingsPayFrequency' name='payFrequency'>" + selectOptions([{ value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Biweekly" }, { value: "semimonthly", label: "Semi-monthly (1st & 15th)" }, { value: "monthly", label: "Monthly" }, { value: "irregular", label: "Irregular" }], profile.payFrequency) + "</select></div><div class='field'><label for='settingsNextPayday'>Next payday</label><input class='form-control' id='settingsNextPayday' type='date' name='nextPayday' value='" + esc(profile.nextPayday) + "'></div><div class='field'><label for='settingsBuffer'>Safety buffer</label><input class='form-control' id='settingsBuffer' type='number' min='0' step='0.01' name='safetyBuffer' value='" + num(profile.safetyBuffer).toFixed(2) + "'><small>A little money you choose not to promise away.</small></div></div><div class='form-actions'><button class='primary-button' type='submit'>Save settings</button></div></form></section><section class='settings-stack'><section class='content-card'><div class='card-title-row'><h3>Mode</h3><span class='badge purple'>ADHD-friendly</span></div><div class='setting-row'><div class='setting-copy'><strong>Simple or everything</strong><span>Simple keeps the everyday pages visible. Everything reveals all tools.</span></div><div class='segmented'><button class='segment " + (profile.mode === "simple" ? "active" : "") + "' data-action='mode-simple'>Simple</button><button class='segment " + (profile.mode === "everything" ? "active" : "") + "' data-action='mode-everything'>Everything</button></div></div><div class='setting-row'><div class='setting-copy'><strong>Focus mode</strong><span>Show one safe-to-spend number with fewer decisions.</span></div><button class='secondary-button' data-action='open-focus'>Open focus</button></div></section><section class='content-card'><div class='card-title-row'><h3>Theme</h3><span class='badge gray'>comfortable</span></div><div class='setting-row'><div class='setting-copy'><strong>Choose a look</strong><span>Use the calmer contrast that feels easiest to read.</span></div><div class='segmented'><button class='segment " + (profile.theme === "light" ? "active" : "") + "' data-action='theme-light'>Light</button><button class='segment " + (profile.theme === "dark" ? "active" : "") + "' data-action='theme-dark'>Dark</button></div></div></section></section></div>";
+    html += "<div class='settings-grid' style='margin-top:18px'><section class='content-card'><div class='card-title-row'><div><h3>Backup and restore</h3><p class='subtle-note' style='margin:5px 0 0'>Keep a copy somewhere safe before changing devices or browsers.</p></div><span class='badge blue'>offline files</span></div><div class='view-actions'><button class='primary-button' data-action='backup-json'>↓ Download backup</button><button class='secondary-button' data-action='restore-json'>↑ Restore backup</button><button class='secondary-button' data-action='export-csv'>Export CSV</button></div><p class='subtle-note' style='margin:17px 0 0'>The backup includes accounts, paychecks, bills, spending, goals, debt, brain dump items, and settings. Keep it private because it contains your financial notes.</p></section><section class='content-card'><div class='card-title-row'><h3>How to use this offline</h3><span class='badge green'>private</span></div><div class='setup-steps'><div class='setup-step'><div class='setup-step-number'>1</div><div><strong>Save the app folder</strong><span>Keep index.html, styles.css, and app.js together.</span></div></div><div class='setup-step'><div class='setup-step-number'>2</div><div><strong>Open index.html</strong><span>It works without an account, server, or bank connection.</span></div></div><div class='setup-step'><div class='setup-step-number'>3</div><div><strong>Download backups regularly</strong><span>A backup is the easiest way to move your plan between devices.</span></div></div></div></section></div>";
+    html += "<section class='content-card' style='margin-top:18px'><div class='card-title-row'><h3>A gentle note about the math</h3><span class='badge amber'>planning tool</span></div><p class='subtle-note'>CalmPocket is a manual planning tool, not a bank feed, lender, tax service, or financial adviser. Verify balances, due dates, and payment amounts with the source that bills you.</p></section>";
+    return html;
+  }
+
+  function selectOptions(options, selected) {
+    return (options || []).map(function (option) {
+      var value = typeof option === "string" ? option : option.value;
+      var label = typeof option === "string" ? option : option.label;
+      return "<option value='" + esc(value) + "'" + (String(value) === String(selected) ? " selected" : "") + ">" + esc(label) + "</option>";
+    }).join("");
+  }
+
+  function accountOptions(selected) {
+    var options = state.accounts.map(function (account) { return { value: account.id, label: account.name + " · " + typeLabel(account.type) }; });
+    if (!options.length) options.push({ value: "", label: "No accounts yet" });
+    return selectOptions(options, selected);
+  }
+
+  function categoryOptions(selected) {
+    var names = Object.keys(categoryIcons).concat(state.envelopes.map(function (item) { return item.name; }));
+    var unique = [];
+    names.forEach(function (name) { if (name && unique.indexOf(name) === -1) unique.push(name); });
+    return selectOptions(unique.map(function (name) { return { value: name, label: categoryIcon(name) + " " + name }; }), selected || unique[0]);
+  }
+
+  function fieldHtml(label, name, value, type, options, extra) {
+    var settings = extra || {};
+    var id = settings.id || "field-" + name;
+    var full = settings.full ? " full" : "";
+    var required = settings.required === false ? "" : " required";
+    var content;
+    if (type === "select") {
+      var selectMarkup = options;
+      if (!selectMarkup && name === "category") selectMarkup = Object.keys(categoryIcons).concat(state.envelopes.map(function (entry) { return entry.name; })).filter(function (entry, index, list) { return entry && list.indexOf(entry) === index; }).map(function (entry) { return { value: entry, label: categoryIcon(entry) + " " + entry }; });
+      if (!selectMarkup && name === "accountId") selectMarkup = state.accounts.map(function (entry) { return { value: entry.id, label: entry.name + " · " + typeLabel(entry.type) }; });
+      if (!selectMarkup || !selectMarkup.length) selectMarkup = [{ value: "", label: "No options yet" }];
+      content = "<select class='form-control' id='" + id + "' name='" + name + "'" + required + ">" + selectOptions(selectMarkup, value) + "</select>";
+    } else if (type === "textarea") {
+      content = "<textarea class='form-control' id='" + id + "' name='" + name + "' placeholder='" + esc(settings.placeholder || "") + "'" + required + ">" + esc(value || "") + "</textarea>";
+    } else {
+      content = "<input class='form-control' id='" + id + "' type='" + (type || "text") + "' name='" + name + "' value='" + esc(value === undefined || value === null ? "" : value) + "' placeholder='" + esc(settings.placeholder || "") + "'" + (settings.min !== undefined ? " min='" + settings.min + "'" : "") + (settings.max !== undefined ? " max='" + settings.max + "'" : "") + (settings.step !== undefined ? " step='" + settings.step + "'" : "") + required + ">";
+    }
+    return "<div class='field" + full + "'><label for='" + id + "'>" + esc(label) + "</label>" + content + (settings.help ? "<small>" + esc(settings.help) + "</small>" : "") + "</div>";
+  }
+
+  function checkboxHtml(label, name, checked, help) {
+    return "<label class='checkbox-line'><input type='checkbox' name='" + name + "'" + (checked ? " checked" : "") + "><span><strong>" + esc(label) + "</strong>" + (help ? "<small>" + esc(help) + "</small>" : "") + "</span></label>";
+  }
+
+  function modalShell(title, subtitle, body, narrow) {
+    return "<div class='modal-backdrop' data-action='close-modal'><div class='modal-card " + (narrow ? "narrow" : "") + "' data-modal-card><div class='modal-header'><div><h2>" + esc(title) + "</h2><p>" + esc(subtitle || "") + "</p></div><button class='modal-close' type='button' data-action='close-modal' aria-label='Close'>×</button></div>" + body + "</div></div>";
+  }
+
+  function renderModal(type, payload) {
+    payload = payload || {};
+    var item = payload.item || {};
+    var isEdit = Boolean(item.id);
+    var body = "";
+    var title = "";
+    var subtitle = "";
+    if (type === "setup") {
+      title = state.profile.sampleMode ? "Start with your numbers" : "Update your setup";
+      subtitle = "Four small fields are enough to make the next number useful. You can fill in the rest later.";
+      body = "<form data-form='setup'><div class='form-grid'>" + fieldHtml("What should we call this plan?", "name", state.profile.name, "text", null, { placeholder: "Your name or plan name" }) + fieldHtml("App name", "appName", state.profile.appName, "text", null, { placeholder: "CalmPocket" }) + fieldHtml("Starting spendable balance", "startingBalance", state.profile.sampleMode ? "" : spendableBalance().toFixed(2), "number", null, { min: 0, step: "0.01", help: "Checking and cash you can use now." }) + fieldHtml("Currency", "currency", state.profile.currency, "select", Object.keys(currencySymbols).map(function (code) { return { value: code, label: code + " · " + currencySymbols[code] }; })) + fieldHtml("Next payday", "nextPayday", state.profile.nextPayday, "date") + fieldHtml("Pay frequency", "payFrequency", state.profile.payFrequency, "select", [{ value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Biweekly" }, { value: "semimonthly", label: "Semi-monthly (1st & 15th)" }, { value: "monthly", label: "Monthly" }, { value: "irregular", label: "Irregular" }]) + fieldHtml("Safety buffer", "safetyBuffer", num(state.profile.safetyBuffer).toFixed(2), "number", null, { min: 0, step: "0.01", help: "Money you want to keep unpromised." }) + fieldHtml("Mode", "mode", state.profile.mode, "select", [{ value: "simple", label: "Simple mode" }, { value: "everything", label: "Everything mode" }]) + "</div><div class='gentle-banner' style='margin-top:18px;margin-bottom:0'><div class='gentle-banner-icon'>◌</div><div class='gentle-banner-copy'><strong>Your sample numbers stay until you save</strong><span>Saving this form starts a clean personal plan. You can always download a backup first from Settings.</span></div></div><div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Not yet</button><button class='primary-button' type='submit'>Save my setup</button></div></form>";
+    } else if (type === "expense") {
+      title = isEdit ? "Edit spending" : "Add spending";
+      subtitle = "Amount first. Details are here when they help.";
+      body = "<form data-form='expense' data-id='" + (item.id || "") + "' data-brain-id='" + (payload.brainId || "") + "'><div class='form-grid'>" + fieldHtml("Amount", "amount", item.amount !== undefined ? num(item.amount).toFixed(2) : (payload.amount || ""), "number", null, { min: 0, step: "0.01", placeholder: "0.00" }) + fieldHtml("Name", "name", item.name || "", "text", null, { placeholder: "Coffee, groceries, pharmacy...", required: false }) + fieldHtml("Category", "category", item.category || "Groceries", "select", null, { required: false }) + fieldHtml("Date", "date", item.date || todayISO(), "date") + fieldHtml("Account", "accountId", item.accountId || (state.accounts[0] && state.accounts[0].id) || "", "select", null, { required: false }) + fieldHtml("Payment method", "paymentMethod", item.paymentMethod || "Debit card", "select", ["Debit card", "Credit card", "Cash", "Transfer", "Other"], { required: false }) + fieldHtml("Note", "note", item.note || "", "textarea", null, { full: true, required: false, placeholder: "Optional context", help: "You can leave this blank." }) + "</div>" + checkboxHtml("Recurring expense", "recurring", item.recurring, "Use this as a reminder for future entries.") + "<div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Save spending</button></div></form>";
+    } else if (type === "brain" || type === "add-brain") {
+      title = "Add a brain dump item";
+      subtitle = "No category required. Capture it and move on.";
+      body = "<form data-form='brain'><div class='field'><label for='brainModalText'>What do you want to remember?</label><textarea class='form-control' id='brainModalText' name='text' placeholder='A purchase, question, reminder, or money thought...' required></textarea></div><div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Save thought</button></div></form>";
+    } else if (type === "bill") {
+      title = isEdit ? "Edit bill" : "Add bill";
+      subtitle = "Recurring, annual, and one-time bills can share the same calm list.";
+      body = "<form data-form='bill' data-id='" + (item.id || "") + "'><div class='form-grid'>" + fieldHtml("Bill name", "name", item.name || "", "text", null, { placeholder: "Rent, phone, insurance..." }) + fieldHtml("Amount", "amount", item.amount !== undefined ? num(item.amount).toFixed(2) : "", "number", null, { min: 0, step: "0.01" }) + fieldHtml("Due date", "dueDate", item.dueDate || todayISO(), "date") + fieldHtml("Frequency", "frequency", item.frequency || "monthly", "select", [{ value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Every 2 weeks" }, { value: "monthly", label: "Monthly" }, { value: "quarterly", label: "Quarterly" }, { value: "annual", label: "Annual" }, { value: "once", label: "One time" }]) + fieldHtml("Account", "accountId", item.accountId || (state.accounts[0] && state.accounts[0].id) || "", "select", null, { required: false }) + fieldHtml("Notes", "notes", item.notes || "", "textarea", null, { full: true, required: false, placeholder: "Optional reminder" }) + "</div>" + checkboxHtml("Autopay", "autopay", item.autopay, "This bill is scheduled automatically.") + checkboxHtml("Set aside gradually", "setAside", item.setAside, "Useful for annual or quarterly bills.") + checkboxHtml("Already paid", "paid", item.paid, "Paid bills leave the attention list.") + "<div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Save bill</button></div></form>";
+    } else if (type === "paycheck") {
+      title = isEdit ? "Edit paycheck" : "Add paycheck";
+      subtitle = "Expected and actual can be different. Your plan can flex.";
+      body = "<form data-form='paycheck' data-id='" + (item.id || "") + "'><div class='form-grid'>" + fieldHtml("Paycheck name", "name", item.name || "Main paycheck", "text", null, { placeholder: "Main paycheck" }) + fieldHtml("Source / earner", "source", item.source || "Work", "text", null, { placeholder: "Work, partner, side income..." }) + fieldHtml("Expected amount", "expected", item.expected !== undefined ? num(item.expected).toFixed(2) : (item.amount !== undefined ? num(item.amount).toFixed(2) : ""), "number", null, { min: 0, step: "0.01" }) + fieldHtml("Actual amount", "actual", item.actual ? num(item.actual).toFixed(2) : "", "number", null, { min: 0, step: "0.01", required: false, help: "Leave blank until it arrives." }) + fieldHtml("Payday", "date", item.date || state.profile.nextPayday || todayISO(), "date") + fieldHtml("Early pay days", "earlyPayDays", item.earlyPayDays || 0, "number", null, { min: 0, max: 7, step: 1, required: false, help: "Optional weekend or holiday early arrival." }) + fieldHtml("Flexible spending target", "flexibleAmount", item.flexibleAmount || 0, "number", null, { min: 0, step: "0.01", required: false, help: "Optional; splits remaining money from unassigned." }) + fieldHtml("Schedule", "frequency", item.frequency || state.profile.payFrequency, "select", [{ value: "weekly", label: "Weekly" }, { value: "biweekly", label: "Biweekly" }, { value: "semimonthly", label: "Semi-monthly" }, { value: "monthly", label: "Monthly" }, { value: "irregular", label: "Irregular" }]) + fieldHtml("Type", "kind", item.kind || "paycheck", "select", [{ value: "paycheck", label: "Paycheck" }, { value: "bonus", label: "Bonus" }, { value: "refund", label: "Refund" }, { value: "gift", label: "Gift" }, { value: "side-income", label: "Side income" }]) + fieldHtml("Status", "status", item.status || "upcoming", "select", [{ value: "upcoming", label: "Expected" }, { value: "received", label: "Received" }, { value: "cancelled", label: "Cancelled" }]) + "</div>" + checkboxHtml("Recurring income", "recurring", item.recurring, "Generate future placeholders from the pay schedule.") + "<div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Save paycheck</button></div></form>";
+    } else if (type === "envelope") {
+      title = isEdit ? "Edit envelope" : "Add envelope";
+      subtitle = "A category is a helpful container, not a pass/fail test.";
+      body = "<form data-form='envelope' data-id='" + (item.id || "") + "'><div class='form-grid'>" + fieldHtml("Category name", "name", item.name || (payload.name || ""), "text", null, { placeholder: "Groceries, pets, hobbies..." }) + fieldHtml("Monthly plan", "limit", item.limit !== undefined ? num(item.limit).toFixed(2) : "", "number", null, { min: 0, step: "0.01" }) + fieldHtml("Reserved now", "reserved", item.reserved !== undefined ? num(item.reserved).toFixed(2) : "", "number", null, { min: 0, step: "0.01", required: false }) + fieldHtml("Icon", "icon", item.icon || "▱", "text", null, { required: false, placeholder: "emoji or symbol" }) + "</div><div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Save envelope</button></div></form>";
+    } else if (type === "goal") {
+      title = isEdit ? "Edit savings goal" : "Add savings goal";
+      subtitle = "A target date makes the next contribution easier to see.";
+      body = "<form data-form='goal' data-id='" + (item.id || "") + "'><div class='form-grid'>" + fieldHtml("Goal name", "name", item.name || "", "text", null, { placeholder: "Emergency fund, holiday, repair..." }) + fieldHtml("Target amount", "target", item.target !== undefined ? num(item.target).toFixed(2) : "", "number", null, { min: 0, step: "0.01" }) + fieldHtml("Already saved", "saved", item.saved !== undefined ? num(item.saved).toFixed(2) : "", "number", null, { min: 0, step: "0.01", required: false }) + fieldHtml("Target date", "targetDate", item.targetDate || isoDate(addMonths(todayISO(), 6)), "date") + fieldHtml("Contribution per paycheck", "perPaycheck", item.perPaycheck !== undefined ? num(item.perPaycheck).toFixed(2) : "", "number", null, { min: 0, step: "0.01", required: false }) + fieldHtml("Icon", "icon", item.icon || "◎", "text", null, { required: false, placeholder: "emoji or symbol" }) + "</div><div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Save goal</button></div></form>";
+    } else if (type === "goalContribution") {
+      title = "Add to " + (item.name || "goal");
+      subtitle = "Log what moved today; the progress bar will update immediately.";
+      body = "<form data-form='goal-contribution' data-id='" + item.id + "'>" + fieldHtml("Contribution amount", "amount", "", "number", null, { min: 0, step: "0.01" }) + fieldHtml("Date", "date", todayISO(), "date") + fieldHtml("Note", "note", "", "text", null, { required: false, placeholder: "Optional" }) + "<div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Add contribution</button></div></form>";
+    } else if (type === "debt") {
+      title = isEdit ? "Edit debt" : "Add debt";
+      subtitle = "List the numbers you know. You can fill in the rest later.";
+      body = "<form data-form='debt' data-id='" + (item.id || "") + "'><div class='form-grid'>" + fieldHtml("Creditor", "creditor", item.creditor || "", "text", null, { placeholder: "Credit card, loan, person..." }) + fieldHtml("Current balance", "balance", item.balance !== undefined ? num(item.balance).toFixed(2) : "", "number", null, { min: 0, step: "0.01" }) + fieldHtml("Starting balance", "originalBalance", item.originalBalance !== undefined ? num(item.originalBalance).toFixed(2) : "", "number", null, { min: 0, step: "0.01", required: false }) + fieldHtml("Interest rate (APR)", "apr", item.apr !== undefined ? num(item.apr).toFixed(2) : "", "number", null, { min: 0, step: "0.01", required: false }) + fieldHtml("Minimum payment", "minimum", item.minimum !== undefined ? num(item.minimum).toFixed(2) : "", "number", null, { min: 0, step: "0.01", required: false }) + fieldHtml("Due date", "dueDate", item.dueDate || todayISO(), "date", null, { required: false }) + fieldHtml("Extra payment", "extra", item.extra !== undefined ? num(item.extra).toFixed(2) : "", "number", null, { min: 0, step: "0.01", required: false }) + fieldHtml("Payoff method", "method", item.method || state.profile.debtMethod, "select", [{ value: "snowball", label: "Snowball" }, { value: "avalanche", label: "Avalanche" }]) + "</div><div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Save debt</button></div></form>";
+    } else if (type === "debtPayment") {
+      title = "Log a debt payment";
+      subtitle = "Reduce the balance you see here; verify the lender balance when needed.";
+      body = "<form data-form='debt-payment' data-id='" + item.id + "'>" + fieldHtml("Payment amount", "amount", "", "number", null, { min: 0, step: "0.01" }) + fieldHtml("Payment date", "date", todayISO(), "date") + fieldHtml("Note", "note", "", "text", null, { required: false, placeholder: "Minimum, extra, transfer..." }) + "<div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Log payment</button></div></form>";
+    } else if (type === "account") {
+      title = isEdit ? "Edit account" : "Add account";
+      subtitle = "Manual balances keep this planner private and portable.";
+      body = "<form data-form='account' data-id='" + (item.id || "") + "'><div class='form-grid'>" + fieldHtml("Account name", "name", item.name || "", "text", null, { placeholder: "Main checking, cash wallet..." }) + fieldHtml("Type", "type", item.type || "checking", "select", [{ value: "checking", label: "Checking" }, { value: "savings", label: "Savings" }, { value: "cash", label: "Cash" }, { value: "credit", label: "Credit card" }, { value: "other", label: "Other" }]) + fieldHtml("Current balance", "balance", item.balance !== undefined ? num(item.balance).toFixed(2) : "", "number", null, { step: "0.01" }) + "</div>" + checkboxHtml("Include in safe-to-spend", "includeInSpendable", item.includeInSpendable && item.type !== "credit", "Savings and credit accounts can stay visible without being everyday spending money.") + "<div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Save account</button></div></form>";
+    } else if (type === "impulse") {
+      title = "Add an impulse pause";
+      subtitle = "You are not forbidding the purchase. You are giving yourself a little space.";
+      body = "<form data-form='impulse'><div class='form-grid'>" + fieldHtml("What do you want?", "item", "", "text", null, { placeholder: "Desk lamp, game, shoes..." }) + fieldHtml("Amount", "amount", "", "number", null, { min: 0, step: "0.01" }) + fieldHtml("Pause length", "waitHours", 24, "select", [{ value: 24, label: "24 hours" }, { value: 48, label: "48 hours" }]) + "</div><div class='form-actions'><button class='secondary-button' type='button' data-action='close-modal'>Cancel</button><button class='primary-button' type='submit'>Start pause</button></div></form>";
+    } else if (type === "formula") {
+      var budget = calculateBudget();
+      title = "How safe-to-spend is calculated";
+      subtitle = "Every line is visible so the number never has to feel mysterious.";
+      body = "<div class='formula-card'><div class='formula-line'><span>Current spendable balance</span><strong>" + formatMoney(budget.balance) + "</strong></div><div class='formula-line'><span>Confirmed income before payday</span><strong>+" + formatMoney(budget.incoming) + "</strong></div><div class='formula-line'><span>Bills due before payday</span><strong>-" + formatMoney(budget.bills) + "</strong></div><div class='formula-line'><span>Savings and envelope allocations</span><strong>-" + formatMoney(budget.envelopes + budget.goals) + "</strong></div><div class='formula-line'><span>Debt payments due before payday</span><strong>-" + formatMoney(budget.debt) + "</strong></div><div class='formula-line'><span>Safety buffer</span><strong>-" + formatMoney(budget.buffer) + "</strong></div><div class='formula-total'><div>Money safe until " + esc(formatDate(budget.paydayDate)) + "</div><strong>" + formatMoney(budget.safeUntil) + "</strong></div></div><div class='formula-card' style='margin-top:12px'><div class='formula-line'><span>Money safe until payday</span><strong>" + formatMoney(budget.safeUntil) + "</strong></div><div class='formula-line'><span>Days remaining</span><strong>" + budget.days + "</strong></div><div class='formula-total'><div>Safe to spend today</div><strong>" + formatMoney(budget.safeToday) + "</strong></div></div><div class='form-actions'><button class='primary-button' type='button' data-action='close-modal'>Got it</button></div>";
+    }
+    document.getElementById("modalRoot").innerHTML = modalShell(title, subtitle, body, type === "formula" || type === "impulse" || type === "goalContribution");
+  }
+
+  function getById(list, id) {
+    return (list || []).find(function (item) { return item.id === id; });
+  }
+
+  function closeModal() {
+    document.getElementById("modalRoot").innerHTML = "";
+  }
+
+  function commit(message, type) {
+    var snapshot = undoSnapshot;
+    undoSnapshot = null;
+    saveState();
+    renderShell();
+    if (message) showToast(message, type, snapshot);
+  }
+
+  function rememberUndo() {
+    try {
+      undoSnapshot = JSON.stringify(state);
+    } catch (error) {
+      undoSnapshot = null;
+    }
+  }
+
+  function confirmDelete(message) {
+    return window.confirm(message || "Remove this item?");
+  }
+
+  function downloadText(filename, text, mime) {
+    var blob = new Blob([text], { type: mime || "text/plain;charset=utf-8" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+  }
+
+  function csvCell(value) {
+    var text = String(value === undefined || value === null ? "" : value);
+    return "\"" + text.replace(/\"/g, "\"\"") + "\"";
+  }
+
+  function downloadBackup() {
+    var backup = Object.assign({}, state, { backupVersion: 1, exportedAt: new Date().toISOString() });
+    downloadText("calmpocket-backup-" + todayISO() + ".json", JSON.stringify(backup, null, 2), "application/json;charset=utf-8");
+    showToast("Backup downloaded. Keep it somewhere safe.");
+  }
+
+  function downloadCsv() {
+    var rows = [["Type", "Date", "Name", "Category", "Amount", "Account", "Status", "Note"]];
+    state.expenses.forEach(function (item) {
+      rows.push(["Expense", item.date, item.name || "", item.category || "", item.amount, accountName(item.accountId), item.recurring ? "Recurring" : "", item.note || ""]);
+    });
+    state.bills.forEach(function (item) {
+      rows.push(["Bill", item.dueDate, item.name || "", "", item.amount, accountName(item.accountId), item.paid ? "Paid" : "Unpaid", item.notes || ""]);
+    });
+    state.paychecks.forEach(function (item) {
+      rows.push(["Income", paycheckDate(item), item.name || "", item.kind || "Paycheck", valueOfPaycheck(item), "", item.status || "", item.source || ""]);
+    });
+    downloadText("calmpocket-export-" + todayISO() + ".csv", rows.map(function (row) { return row.map(csvCell).join(","); }).join("\n"), "text/csv;charset=utf-8");
+    showToast("CSV export downloaded.");
+  }
+
+  function handleSubmit(event) {
+    var form = event.target;
+    var type = form.getAttribute("data-form");
+    if (!type) return;
+    if (DEMO_MODE && !form.getAttribute('data-id') && !demoCanCreate(type)) return;
+    event.preventDefault();
+    rememberUndo();
+    var data = new FormData(form);
+    var id = form.getAttribute("data-id") || "";
+    var item;
+    if (type === "setup") {
+      var wasSample = state.profile.sampleMode;
+      var setupName = String(data.get("name") || "Your calm plan").trim() || "Your calm plan";
+      if (wasSample) {
+        state = blankState();
+        var starting = num(data.get("startingBalance"));
+        if (starting > 0) state.accounts.push({ id: uid("acc"), name: "Main checking", type: "checking", balance: starting, includeInSpendable: true });
+      }
+      state.profile.name = setupName;
+      state.profile.appName = String(data.get("appName") || "CalmPocket").trim() || "CalmPocket";
+      state.profile.currency = String(data.get("currency") || "USD");
+      state.profile.nextPayday = String(data.get("nextPayday") || todayISO());
+      state.profile.payFrequency = String(data.get("payFrequency") || "biweekly");
+      state.profile.safetyBuffer = num(data.get("safetyBuffer"));
+      state.profile.mode = String(data.get("mode") || "simple");
+      state.profile.sampleMode = false;
+      state.ui.awayDays = 0;
+      state.view = "today";
+      commit("Your plan is ready. One calm number at a time.");
+      closeModal();
+      return;
+    }
+    if (type === "expense") {
+      item = id ? getById(state.expenses, id) : null;
+      var expense = item || { id: uid("exp") };
+      expense.amount = num(data.get("amount"));
+      expense.category = String(data.get("category") || "Other");
+      expense.name = String(data.get("name") || expense.category).trim() || expense.category;
+      expense.date = String(data.get("date") || todayISO());
+      expense.accountId = String(data.get("accountId") || "");
+      expense.paymentMethod = String(data.get("paymentMethod") || "Other");
+      expense.note = String(data.get("note") || "").trim();
+      expense.recurring = data.get("recurring") === "on";
+      if (!item) state.expenses.push(expense);
+      if (form.getAttribute("data-brain-id")) {
+        var brainResolved = getById(state.brainDump, form.getAttribute("data-brain-id"));
+        if (brainResolved) brainResolved.done = true;
+      }
+      commit("Spending saved. You can keep moving.");
+      closeModal();
+      return;
+    }
+    if (type === "brain-inline" || type === "brain") {
+      var textValue = String(data.get("text") || "").trim();
+      if (textValue) state.brainDump.unshift({ id: uid("brain"), text: textValue, createdAt: todayISO(), done: false });
+      commit("Saved to Brain dump.");
+      if (type === "brain") closeModal();
+      return;
+    }
+    if (type === "bill") {
+      item = id ? getById(state.bills, id) : null;
+      var bill = item || { id: uid("bill") };
+      bill.name = String(data.get("name") || "Bill").trim() || "Bill";
+      bill.amount = num(data.get("amount"));
+      bill.dueDate = String(data.get("dueDate") || todayISO());
+      bill.frequency = String(data.get("frequency") || "monthly");
+      bill.accountId = String(data.get("accountId") || "");
+      bill.notes = String(data.get("notes") || "").trim();
+      bill.autopay = data.get("autopay") === "on";
+      bill.setAside = data.get("setAside") === "on";
+      bill.paid = data.get("paid") === "on";
+      if (!item) state.bills.push(bill);
+      commit("Bill saved.");
+      closeModal();
+      return;
+    }
+    if (type === "paycheck") {
+      item = id ? getById(state.paychecks, id) : null;
+      var paycheck = item || { id: uid("pay") };
+      paycheck.name = String(data.get("name") || "Paycheck").trim() || "Paycheck";
+      paycheck.source = String(data.get("source") || "Income").trim() || "Income";
+      paycheck.expected = num(data.get("expected"));
+      paycheck.amount = paycheck.expected;
+      paycheck.actual = num(data.get("actual"));
+      paycheck.date = String(data.get("date") || todayISO());
+      paycheck.earlyPayDays = num(data.get("earlyPayDays"));
+      paycheck.flexibleAmount = num(data.get("flexibleAmount"));
+      paycheck.frequency = String(data.get("frequency") || state.profile.payFrequency);
+      paycheck.kind = String(data.get("kind") || "paycheck");
+      paycheck.status = String(data.get("status") || (paycheck.actual > 0 ? "received" : "upcoming"));
+      if (paycheck.actual > 0) paycheck.status = "received";
+      paycheck.recurring = data.get("recurring") === "on";
+      if (!item) state.paychecks.push(paycheck);
+      if (paycheck.date === state.profile.nextPayday) state.profile.nextPayday = paycheck.date;
+      commit("Paycheck saved.");
+      closeModal();
+      return;
+    }
+    if (type === "envelope") {
+      item = id ? getById(state.envelopes, id) : null;
+      var envelope = item || { id: uid("env") };
+      envelope.name = String(data.get("name") || "Category").trim() || "Category";
+      envelope.limit = num(data.get("limit"));
+      envelope.reserved = num(data.get("reserved"));
+      envelope.icon = String(data.get("icon") || categoryIcon(envelope.name));
+      if (!item) state.envelopes.push(envelope);
+      commit("Envelope saved.");
+      closeModal();
+      return;
+    }
+    if (type === "goal") {
+      item = id ? getById(state.goals, id) : null;
+      var goal = item || { id: uid("goal") };
+      goal.name = String(data.get("name") || "Savings goal").trim() || "Savings goal";
+      goal.target = num(data.get("target"));
+      goal.saved = num(data.get("saved"));
+      goal.targetDate = String(data.get("targetDate") || isoDate(addMonths(todayISO(), 6)));
+      goal.perPaycheck = num(data.get("perPaycheck"));
+      goal.icon = String(data.get("icon") || "◎");
+      if (!item) state.goals.push(goal);
+      commit("Savings goal saved.");
+      closeModal();
+      return;
+    }
+    if (type === "goal-contribution") {
+      var contributionGoal = getById(state.goals, id);
+      if (contributionGoal) {
+        contributionGoal.saved = num(contributionGoal.saved) + num(data.get("amount"));
+        contributionGoal.contributions = contributionGoal.contributions || [];
+        contributionGoal.contributions.push({ id: uid("contribution"), amount: num(data.get("amount")), date: String(data.get("date") || todayISO()), note: String(data.get("note") || "") });
+      }
+      commit("Contribution added. That is progress you can see.");
+      closeModal();
+      return;
+    }
+    if (type === "debt") {
+      item = id ? getById(state.debts, id) : null;
+      var debt = item || { id: uid("debt"), payments: [] };
+      debt.creditor = String(data.get("creditor") || "Debt").trim() || "Debt";
+      debt.balance = num(data.get("balance"));
+      debt.originalBalance = num(data.get("originalBalance")) || debt.balance;
+      debt.apr = num(data.get("apr"));
+      debt.minimum = num(data.get("minimum"));
+      debt.dueDate = String(data.get("dueDate") || todayISO());
+      debt.extra = num(data.get("extra"));
+      debt.method = String(data.get("method") || state.profile.debtMethod);
+      debt.payments = debt.payments || [];
+      if (!item) state.debts.push(debt);
+      commit("Debt saved.");
+      closeModal();
+      return;
+    }
+    if (type === "debt-payment") {
+      var debtItem = getById(state.debts, id);
+      if (debtItem) {
+        var paymentAmount = Math.min(num(data.get("amount")), num(debtItem.balance));
+        debtItem.balance = Math.max(0, num(debtItem.balance) - paymentAmount);
+        debtItem.payments = debtItem.payments || [];
+        debtItem.payments.push({ id: uid("debt-payment"), amount: paymentAmount, date: String(data.get("date") || todayISO()), note: String(data.get("note") || "") });
+      }
+      commit("Debt payment logged.");
+      closeModal();
+      return;
+    }
+    if (type === "account") {
+      item = id ? getById(state.accounts, id) : null;
+      var account = item || { id: uid("acc") };
+      account.name = String(data.get("name") || "Account").trim() || "Account";
+      account.type = String(data.get("type") || "checking");
+      account.balance = num(data.get("balance"));
+      account.includeInSpendable = data.get("includeInSpendable") === "on" && account.type !== "credit";
+      if (!item) state.accounts.push(account);
+      commit("Account saved.");
+      closeModal();
+      return;
+    }
+    if (type === "impulse") {
+      state.impulses.unshift({ id: uid("impulse"), item: String(data.get("item") || "Want").trim() || "Want", amount: num(data.get("amount")), createdAt: todayISO(), waitHours: num(data.get("waitHours")) || 24, status: "waiting" });
+      commit("Impulse pause started.");
+      closeModal();
+      return;
+    }
+    if (type === "review-notes") {
+      var monthKey = state.ui.reviewMonth || todayISO().slice(0, 7);
+      state.reviewNotes[monthKey] = String(data.get("note") || "").trim();
+      commit("Review note saved.");
+      return;
+    }
+    if (type === "settings-profile") {
+      state.profile.name = String(data.get("name") || "Your calm plan").trim() || "Your calm plan";
+      state.profile.appName = String(data.get("appName") || "CalmPocket").trim() || "CalmPocket";
+      state.profile.currency = String(data.get("currency") || "USD");
+      state.profile.payFrequency = String(data.get("payFrequency") || "biweekly");
+      state.profile.nextPayday = String(data.get("nextPayday") || todayISO());
+      state.profile.safetyBuffer = num(data.get("safetyBuffer"));
+      commit("Settings saved.");
+      return;
+    }
+  }
+
+  function removeById(list, id) {
+    var index = list.findIndex(function (item) { return item.id === id; });
+    if (index >= 0) list.splice(index, 1);
+  }
+
+  function handleClick(event) {
+    if (event.target.classList && event.target.classList.contains("modal-backdrop")) {
+      closeModal();
+      return;
+    }
+    var viewButton = event.target.closest ? event.target.closest("[data-view]") : null;
+    if (viewButton && !event.target.closest("[data-action]")) {
+      state.view = viewButton.getAttribute("data-view");
+      saveState();
+      renderShell();
+      document.getElementById("sidebar").classList.remove("open");
+      return;
+    }
+    var button = event.target.closest ? event.target.closest("[data-action]") : null;
+    if (!button) return;
+    var action = button.getAttribute("data-action");
+    if (DEMO_MODE && (action === "export-csv" || action === "export-json" || action === "restore-json" || action === "enable-reminders" || action === "toggle-dark" || action === "dark-mode")) {
+      demoUpgradePopup("This premium feature is locked in the free demo. Purchase to unlock more features.");
+      return;
+    }
+    if (action === "undo") {
+      var undoId = button.getAttribute("data-undo-id");
+      var undoValue = undoId ? undoSnapshots[undoId] : null;
+      if (undoValue) {
+        try {
+          state = mergeState(JSON.parse(undoValue));
+          delete undoSnapshots[undoId];
+          commit("Last change undone.");
+        } catch (error) {
+          delete undoSnapshots[undoId];
+          showToast("The last change could not be undone.", "warning");
+        }
+      }
+      return;
+    }
+    if (action === "close-modal") {
+      if (button.classList.contains("modal-backdrop") && event.target !== button) return;
+      closeModal();
+      return;
+    }
+    if (action === "load-sample") {
+      var hasPersonalData = state.accounts.length || state.paychecks.length || state.bills.length ||
+        state.expenses.length || state.envelopes.length || state.goals.length || state.debts.length ||
+        state.brainDump.length || state.impulses.length;
+      if (hasPersonalData && !confirmDelete("Load the sample plan? This replaces the current planner data. Download a backup first if you want to keep it.")) return;
+      rememberUndo();
+      state = sampleState();
+      state.profile.sampleMode = true;
+      state.view = "today";
+      state.lastOpened = todayISO();
+      commit("Sample plan loaded. You can replace it with your own numbers.");
+      return;
+    }
+    if (action === "setup") return renderModal("setup");
+    if (action === "formula") return renderModal("formula");
+    if (action === "add-expense") return renderModal("expense");
+    if (action === "quick-expense") return renderModal("expense", { amount: button.getAttribute("data-amount") });
+    if (action === "add-brain") return renderModal("brain");
+    if (action === "add-bill") return renderModal("bill");
+    if (action === "add-paycheck") return renderModal("paycheck");
+    if (action === "add-envelope") return renderModal("envelope");
+    if (action === "add-envelope-name") return renderModal("envelope", { name: button.getAttribute("data-name") });
+    if (action === "add-goal") return renderModal("goal");
+    if (action === "add-debt") return renderModal("debt");
+    if (action === "add-account") return renderModal("account");
+    if (action === "add-impulse") return renderModal("impulse");
+    if (action === "edit-expense") return renderModal("expense", { item: getById(state.expenses, button.getAttribute("data-id")) });
+    if (action === "edit-bill") return renderModal("bill", { item: getById(state.bills, button.getAttribute("data-id")) });
+    if (action === "edit-paycheck") return renderModal("paycheck", { item: getById(state.paychecks, button.getAttribute("data-id")) });
+    if (action === "edit-envelope") return renderModal("envelope", { item: getById(state.envelopes, button.getAttribute("data-id")) });
+    if (action === "edit-goal") return renderModal("goal", { item: getById(state.goals, button.getAttribute("data-id")) });
+    if (action === "edit-debt") return renderModal("debt", { item: getById(state.debts, button.getAttribute("data-id")) });
+    if (action === "edit-account") return renderModal("account", { item: getById(state.accounts, button.getAttribute("data-id")) });
+    if (action === "add-debt-payment") return renderModal("debtPayment", { item: getById(state.debts, button.getAttribute("data-id")) });
+    if (action === "contribute-goal") return renderModal("goalContribution", { item: getById(state.goals, button.getAttribute("data-id")) });
+    if (action === "done-brain") {
+      rememberUndo();
+      var doneItem = getById(state.brainDump, button.getAttribute("data-id"));
+      if (doneItem) doneItem.done = true;
+      return commit("Brain dump item marked done.");
+    }
+    if (action === "delete-brain") {
+      if (confirmDelete("Remove this Brain dump item?")) { rememberUndo(); removeById(state.brainDump, button.getAttribute("data-id")); commit("Brain dump item removed."); }
+      return;
+    }
+    if (action === "resolve-brain") {
+      var resolveItem = getById(state.brainDump, button.getAttribute("data-id"));
+      if (resolveItem) renderModal("expense", { item: { name: "", category: "Other", date: todayISO(), note: resolveItem.text, accountId: state.accounts[0] ? state.accounts[0].id : "", paymentMethod: "Other", recurring: false }, brainId: resolveItem.id });
+      return;
+    }
+    if (action === "delete-expense") {
+      if (confirmDelete("Remove this spending entry?")) { rememberUndo(); removeById(state.expenses, button.getAttribute("data-id")); commit("Spending entry removed."); }
+      return;
+    }
+    if (action === "delete-bill") {
+      if (confirmDelete("Remove this bill?")) { rememberUndo(); removeById(state.bills, button.getAttribute("data-id")); commit("Bill removed."); }
+      return;
+    }
+    if (action === "delete-envelope") {
+      if (confirmDelete("Remove this envelope?")) { rememberUndo(); removeById(state.envelopes, button.getAttribute("data-id")); commit("Envelope removed."); }
+      return;
+    }
+    if (action === "delete-goal") {
+      if (confirmDelete("Remove this savings goal?")) { rememberUndo(); removeById(state.goals, button.getAttribute("data-id")); commit("Savings goal removed."); }
+      return;
+    }
+    if (action === "delete-debt") {
+      if (confirmDelete("Remove this debt from the planner?")) { rememberUndo(); removeById(state.debts, button.getAttribute("data-id")); commit("Debt removed."); }
+      return;
+    }
+    if (action === "delete-account") {
+      if (confirmDelete("Remove this account?")) { rememberUndo(); removeById(state.accounts, button.getAttribute("data-id")); commit("Account removed."); }
+      return;
+    }
+    if (action === "pay-bill" || action === "unpay-bill") {
+      rememberUndo();
+      var billItem = getById(state.bills, button.getAttribute("data-id"));
+      if (billItem) billItem.paid = action === "pay-bill";
+      return commit(action === "pay-bill" ? "Bill marked paid." : "Bill moved back to upcoming.");
+    }
+    if (action === "impulse-buy" || action === "impulse-dismiss") {
+      rememberUndo();
+      var impulse = getById(state.impulses, button.getAttribute("data-id"));
+      if (impulse) impulse.status = action === "impulse-buy" ? "purchased" : "dismissed";
+      return commit(action === "impulse-buy" ? "Purchase marked as decided." : "Want dismissed. Good information either way.");
+    }
+    if (action === "debt-method") {
+      rememberUndo();
+      state.profile.debtMethod = button.getAttribute("data-method") || "snowball";
+      return commit("Payoff method updated.");
+    }
+    if (action === "mode-simple" || action === "mode-everything") {
+      rememberUndo();
+      state.profile.mode = action === "mode-simple" ? "simple" : "everything";
+      return commit(state.profile.mode === "simple" ? "Simple mode on." : "Everything mode on.");
+    }
+    if (action === "theme-light" || action === "theme-dark") {
+      rememberUndo();
+      state.profile.theme = action === "theme-dark" ? "dark" : "light";
+      return commit("Theme updated.");
+    }
+    if (action === "open-focus") {
+      state.ui.focusMode = true;
+      saveState();
+      renderShell();
+      return;
+    }
+    if (action === "close-focus") {
+      state.ui.focusMode = false;
+      saveState();
+      renderShell();
+      return;
+    }
+    if (action === "catch-up") {
+      rememberUndo();
+      state.ui.awayDays = 0;
+      state.lastOpened = todayISO();
+      state.view = "today";
+      commit("Welcome back. Your plan is still here.");
+      return;
+    }
+    if (action === "show-everything") {
+      rememberUndo();
+      state.profile.mode = "everything";
+      return commit("Everything mode on. More tools are visible now.");
+    }
+    if (action === "calendar-prev" || action === "calendar-next") {
+      monthCursor = addMonths(monthCursor, action === "calendar-prev" ? -1 : 1);
+      renderShell();
+      return;
+    }
+    if (action === "calendar-today") {
+      monthCursor = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+      renderShell();
+      return;
+    }
+    if (action === "review-prev" || action === "review-next") {
+      var reviewDate = addMonths((state.ui.reviewMonth || todayISO().slice(0, 7)) + "-01", action === "review-prev" ? -1 : 1);
+      state.ui.reviewMonth = isoDate(reviewDate).slice(0, 7);
+      saveState();
+      renderShell();
+      return;
+    }
+    if (action === "review-today") {
+      state.ui.reviewMonth = todayISO().slice(0, 7);
+      saveState();
+      renderShell();
+      return;
+    }
+    if (action === "backup-json") return downloadBackup();
+    if (action === "restore-json") return document.getElementById("restoreInput").click();
+    if (action === "export-csv") return downloadCsv();
+    if (action === "clear-sample") {
+      if (confirmDelete("Remove the sample data and return to an empty plan?")) {
+        rememberUndo();
+        state = blankState();
+        state.view = "start";
+        commit("Sample data removed. Your plan is empty.");
+      }
+      return;
+    }
+    if (action === "start-fresh") {
+      if (confirmDelete("Start with an empty plan? Download a backup first if you want to keep these numbers.")) {
+        rememberUndo();
+        state = blankState();
+        state.view = "start";
+        commit("A fresh, empty plan is ready.");
+      }
+      return;
+    }
+  }
+
+  function setupEvents() {
+    document.addEventListener("click", handleClick);
+    document.addEventListener("submit", handleSubmit);
+    document.getElementById("focusButton").addEventListener("click", function () {
+      state.ui.focusMode = true;
+      saveState();
+      renderShell();
+    });
+    document.getElementById("globalAdd").addEventListener("click", function () { renderModal("expense"); });
+    document.getElementById("menuToggle").addEventListener("click", function () { document.getElementById("sidebar").classList.add("open"); });
+    document.getElementById("sidebarClose").addEventListener("click", function () { document.getElementById("sidebar").classList.remove("open"); });
+    document.getElementById("restoreInput").addEventListener("change", function (event) {
+      var file = event.target.files && event.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          state = mergeState(JSON.parse(reader.result));
+          state.profile.sampleMode = false;
+          state.lastOpened = todayISO();
+          state.ui.awayDays = 0;
+          saveState();
+          renderShell();
+          showToast("Backup restored.");
+        } catch (error) {
+          showToast("That backup could not be read. Nothing was changed.", "warning");
+        }
+        event.target.value = "";
+      };
+      reader.readAsText(file);
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape") {
+        if (state.ui.focusMode) {
+          state.ui.focusMode = false;
+          saveState();
+          renderShell();
+        } else {
+          closeModal();
+        }
+      }
+    });
+  }
+
+  setupEvents();
+  renderShell();
+
+  window.Calmpocket = {
+    getState: function () { return state; },
+    render: renderShell
+  };
+})();
+</script>
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v31edd6df95cf4e85bb4c19e7a9bdbcba1788362987495" integrity="sha512-iIg7k2xntmwu6/uSb5tpc/hySgZc4eoL31yB29W6tJFo2akwjPWcEqnCEdJvGexCL0KEQwVYv5BlowfhVz26hg==" data-cf-beacon='{"version":"2024.11.0","token":"2aeec7579b0044ad80905333985ef882","r":1,"spa":2}' crossorigin="anonymous"></script>
+</body>
+</html>
